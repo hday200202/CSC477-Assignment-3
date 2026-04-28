@@ -6,8 +6,8 @@ public class Game : MonoBehaviour
 {
     void Awake()
     {
-        HS.Init(this, "Artificial Instinct");
-        ClearScores();
+        // HS.Init(this, "Artificial Instinct");
+        // ClearScores();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -16,7 +16,7 @@ public class Game : MonoBehaviour
     // Update is called once per frame
     void Update() {}
 
-    public void SubmitScore(String name, int score)
+    public void SubmitScore(System.String name, int score)
     { HS.SubmitHighScore(this, name, score); }
 
     public void ClearScores()
