@@ -2,10 +2,13 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class FacultyWanderer : MonoBehaviour {
+public class FacultyAI : MonoBehaviour {
     [Header("Movement")]
     public float moveSpeed = 1.5f;
     public float arrivalDistance = 0.15f;
+
+    [Header("Debug Path Drawing")]
+    public bool drawPath = false;
 
     [Header("Wandering")]
     public float minRestTime = 2f;
@@ -20,7 +23,7 @@ public class FacultyWanderer : MonoBehaviour {
     public float repulsionRadius = 0.9f;
     public float repulsionStrength = 1.2f;
 
-    private static readonly List<FacultyWanderer> all = new List<FacultyWanderer>();
+    private static readonly List<FacultyAI> all = new List<FacultyAI>();
 
     private List<Collider2D> walkableColliders = new List<Collider2D>();
     private bool[,] grid;
@@ -47,7 +50,7 @@ public class FacultyWanderer : MonoBehaviour {
         } else {
             colliderHalfExtents = Vector2.one * 0.25f;
             colliderOffset = Vector2.zero;
-            Debug.LogWarning("[FacultyWanderer] No BoxCollider2D found.");
+            Debug.LogWarning("[FacultyAI] No BoxCollider2D found.");
         }
 
         foreach (GameObject go in GameObject.FindGameObjectsWithTag("Walkable"))
@@ -55,7 +58,7 @@ public class FacultyWanderer : MonoBehaviour {
                 if (col != null) walkableColliders.Add(col);
 
         if (walkableColliders.Count == 0) {
-            Debug.LogWarning("[FacultyWanderer] No Walkable colliders found.");
+            Debug.LogWarning("[FacultyAI] No Walkable colliders found.");
             return;
         }
 
@@ -63,13 +66,15 @@ public class FacultyWanderer : MonoBehaviour {
             cellSize = Mathf.Min(colliderHalfExtents.x, colliderHalfExtents.y);
         cellSize = Mathf.Max(cellSize, 0.05f);
 
-        pathLine = gameObject.AddComponent<LineRenderer>();
-        pathLine.material = new Material(Shader.Find("Sprites/Default"));
-        pathLine.startWidth = 0.07f;
-        pathLine.endWidth = 0.07f;
-        pathLine.useWorldSpace = true;
-        pathLine.sortingOrder = 999;
-        pathLine.positionCount = 0;
+        if (drawPath) {
+            pathLine = gameObject.AddComponent<LineRenderer>();
+            pathLine.material = new Material(Shader.Find("Sprites/Default"));
+            pathLine.startWidth = 0.07f;
+            pathLine.endWidth = 0.07f;
+            pathLine.useWorldSpace = true;
+            pathLine.sortingOrder = 999;
+            pathLine.positionCount = 0;
+        }
     }
 
     void OnDestroy() { all.Remove(this); }
@@ -98,7 +103,7 @@ public class FacultyWanderer : MonoBehaviour {
             for (int y = 0; y < gridHeight; y++)
                 grid[x, y] = IsWalkableCenter(GridToWorld(x, y));
 
-        Debug.Log($"[FacultyWanderer] Grid {gridWidth}x{gridHeight} built.");
+        Debug.Log($"[FacultyAI] Grid {gridWidth}x{gridHeight} built.");
     }
 
     void Update() {
