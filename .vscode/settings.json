@@ -67,5 +67,11 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "CSC477-Assignment-3.slnx"
+    "dotnet.defaultSolution": "CSC477-Assignment-3.slnx",
+    "csharp.format.enable": false,
+    "razor.format.enable": false,
+    "dotnet.autoInsert.enableAutoInsert": false,
+    "dotnet.codeLens.enableReferencesCodeLens": false,
+    "dotnet.codeLens.enableTestsCodeLens": false,
+    "editor.codeLens": false
 }

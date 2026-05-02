@@ -1,21 +1,34 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using HighScore;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
 
 public class Game : MonoBehaviour
 {
+    [Header("Terminal")]
+        public GameObject terminal = null;
+
     void Awake()
     {
         HS.Init(this, "Artificial Instinct");
         ClearScores();
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start() {}
 
-    // Update is called once per frame
-    void Update() {}
+    void Update()
+    {
+        if (Keyboard.current.ctrlKey.isPressed && Keyboard.current.tKey.wasPressedThisFrame)
+            ToggleTerminal();
+    }
+
+    void ToggleTerminal()
+    {
+        if (terminal == null) return;
+        bool next = !terminal.activeSelf;
+        terminal.SetActive(next);
+        var t = terminal.GetComponent<Terminal>();
+        if (t != null) t.active = next;
+    }
 
     public void SubmitScore(System.String name, int score)
     { HS.SubmitHighScore(this, name, score); }
