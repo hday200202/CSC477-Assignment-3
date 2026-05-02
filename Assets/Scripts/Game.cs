@@ -1,13 +1,14 @@
 using UnityEngine;
 using HighScore;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 public class Game : MonoBehaviour
 {
     void Awake()
     {
-        // HS.Init(this, "Artificial Instinct");
-        // ClearScores();
+        HS.Init(this, "Artificial Instinct");
+        ClearScores();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
