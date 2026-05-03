@@ -5,7 +5,8 @@ using System.Collections.Generic;
 public class FacultyAI : MonoBehaviour {
     [Header("Movement")]
     public float moveSpeed = 1.5f;
-    public float arrivalDistance = 0.15f;
+    [Tooltip("Leave 0 to auto-derive as a fraction of cellSize.")]
+    public float arrivalDistance = 0f;
 
     [Header("Debug Path Drawing")]
     public bool drawPath = false;
@@ -17,7 +18,8 @@ public class FacultyAI : MonoBehaviour {
     [Header("Pathfinding Grid")]
     [Tooltip("Leave 0 to auto-derive from BoxCollider2D.")]
     public float cellSize = 0f;
-    public float edgePadding = 0.08f;
+    [Tooltip("Clearance fraction of cellSize added to corners in the per-step walkability check.")]
+    public float edgePadding = 0.3f;
 
     [Header("Repulsion")]
     public float repulsionRadius = 0.9f;
@@ -42,6 +44,18 @@ public class FacultyAI : MonoBehaviour {
         all.RemoveAll(f => f == null);
         all.Add(this);
 
+        foreach (GameObject go in GameObject.FindGameObjectsWithTag("Walkable"))
+            foreach (Collider2D col in go.GetComponents<Collider2D>())
+                if (col != null) walkableColliders.Add(col);
+
+        if (walkableColliders.Count == 0)
+            Debug.LogWarning("[FacultyAI] No Walkable colliders found.");
+    }
+
+    void OnDestroy() { all.Remove(this); }
+
+    void Start() {
+        // Read scale here so all parent Awake/Start transforms are settled.
         BoxCollider2D box = GetComponent<BoxCollider2D>();
         if (box != null) {
             Vector2 s = new Vector2(Mathf.Abs(transform.lossyScale.x), Mathf.Abs(transform.lossyScale.y));
@@ -53,33 +67,23 @@ public class FacultyAI : MonoBehaviour {
             Debug.LogWarning("[FacultyAI] No BoxCollider2D found.");
         }
 
-        foreach (GameObject go in GameObject.FindGameObjectsWithTag("Walkable"))
-            foreach (Collider2D col in go.GetComponents<Collider2D>())
-                if (col != null) walkableColliders.Add(col);
-
-        if (walkableColliders.Count == 0) {
-            Debug.LogWarning("[FacultyAI] No Walkable colliders found.");
-            return;
-        }
-
         if (cellSize <= 0f)
             cellSize = Mathf.Min(colliderHalfExtents.x, colliderHalfExtents.y);
-        cellSize = Mathf.Max(cellSize, 0.05f);
+
+        if (arrivalDistance <= 0f)
+            arrivalDistance = cellSize * 0.6f;
 
         if (drawPath) {
             pathLine = gameObject.AddComponent<LineRenderer>();
             pathLine.material = new Material(Shader.Find("Sprites/Default"));
-            pathLine.startWidth = 0.07f;
-            pathLine.endWidth = 0.07f;
+            pathLine.startWidth = cellSize * 0.5f;
+            pathLine.endWidth = cellSize * 0.5f;
             pathLine.useWorldSpace = true;
             pathLine.sortingOrder = 999;
             pathLine.positionCount = 0;
         }
-    }
 
-    void OnDestroy() { all.Remove(this); }
-
-    void Start() {
+        if (walkableColliders.Count == 0) return;
         BuildGrid();
         StartCoroutine(StaggeredStart());
     }
@@ -316,8 +320,8 @@ public class FacultyAI : MonoBehaviour {
     // Four-corner padded check used for per-frame movement to keep the sprite off edges.
     bool IsWalkableWorld(Vector2 center) {
         Vector2 c = center + colliderOffset;
-        float px = colliderHalfExtents.x + edgePadding;
-        float py = colliderHalfExtents.y + edgePadding;
+        float px = colliderHalfExtents.x + edgePadding * cellSize;
+        float py = colliderHalfExtents.y + edgePadding * cellSize;
         Vector2[] corners = {
             c + new Vector2(-px, -py),
             c + new Vector2( px, -py),
@@ -326,7 +330,7 @@ public class FacultyAI : MonoBehaviour {
         };
         foreach (Vector2 corner in corners) {
             bool ok = false;
-            foreach (var hit in Physics2D.OverlapCircleAll(corner, 0.05f))
+            foreach (var hit in Physics2D.OverlapCircleAll(corner, cellSize * 0.25f))
                 if (hit.gameObject != gameObject && hit.CompareTag("Walkable"))
                 { ok = true; break; }
             if (!ok) return false;
