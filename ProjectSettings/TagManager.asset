@@ -5,6 +5,15 @@ TagManager:
   serializedVersion: 3
   tags:
   - Walkable
+  - NoDownT
+  - Cross
+  - LR
+  - UD
+  - RD
+  - UR
+  - LU
+  - DL
+  - Empty
   layers:
   - Default
   - TransparentFX
