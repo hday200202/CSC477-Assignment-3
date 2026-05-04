@@ -8,6 +8,8 @@ public class Nodes : MonoBehaviour
 {
 
     public Image[] nodes;
+    public GameObject mapScreen;
+    public GameObject winScreen;
     private int i = 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -22,7 +24,15 @@ public class Nodes : MonoBehaviour
         if (Keyboard.current.enterKey.wasPressedThisFrame)
         {
             i++;
-            nodes[i].color = Color.white;
+            if (i >= nodes.Length)
+            {
+                mapScreen.SetActive(false);
+                winScreen.SetActive(true);
+            }
+            else
+            {
+                nodes[i].color = Color.white;
+            }
         }
     }
 }
