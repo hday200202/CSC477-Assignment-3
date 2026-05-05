@@ -20,8 +20,8 @@ public class Nodes : MonoBehaviour
     void Start()
     {
         nodes[0].color = Color.white;
-        GameObject puzzle = puzzleSelector();
-        //GameObject puzzle = puzzles[2];
+        //GameObject puzzle = puzzleSelector();
+        GameObject puzzle = puzzles[3];
         puzzle.SetActive(true);
         Debug.Log(puzzle.name);
     }
