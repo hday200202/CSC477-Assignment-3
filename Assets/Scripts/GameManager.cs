@@ -38,6 +38,15 @@ public class GameManager : MonoBehaviour {
             queryInterval = Random.Range(queryIntervalMin, queryIntervalMax);
             IssueQuery();
         }
+
+        if (terminal != null) {
+            var t = terminal.GetComponent<Terminal>();
+            if (t != null && t.queryActive) {
+                t.queryTimeLeft -= Time.deltaTime;
+                if (t.queryTimeLeft <= 0f)
+                    t.ExpireQuery();
+            }
+        }
     }
 
     void IssueQuery() {

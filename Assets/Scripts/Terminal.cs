@@ -154,11 +154,7 @@ public class Terminal : MonoBehaviour {
         }
 
         if (queryActive) {
-            queryTimeLeft -= Time.deltaTime;
-            if (queryTimeLeft <= 0f)
-                ExitQuery(timedOut: true);
-            else
-                Refresh();
+            Refresh();
         }
 
         if (!active) return;
@@ -361,6 +357,8 @@ public class Terminal : MonoBehaviour {
     /*
         Restores terminal state and appends a result line to history.
     */
+    public void ExpireQuery() => ExitQuery(timedOut: true);
+
     void ExitQuery(bool timedOut, bool correct = false) {
         queryActive = false;
         history     = savedHistory;
@@ -380,8 +378,8 @@ public class Terminal : MonoBehaviour {
         Refresh();
     }
 
-    private bool    queryActive      = false;
-    private float   queryTimeLeft    = 0f;
+    public bool    queryActive      = false;
+    public float   queryTimeLeft    = 0f;
     private int     queryAnswer      = -1;
     private string  savedHistory     = "";
     private string  savedInputBuffer = "";
