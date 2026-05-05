@@ -113,6 +113,9 @@ public class Terminal : MonoBehaviour {
     [Header("Allow Typing")]
         public bool active = false;
 
+    [Header("Game Manager")]
+        public GameManager gameManager = null;
+
     private List<string> mockOSText = new List<string> {
         " __  __            _     ____   _____ ",
         "|  \\/  |          | |   / __ \\ / ____|",
@@ -148,6 +151,14 @@ public class Terminal : MonoBehaviour {
             cursorTimer   = 0f;
             cursorVisible = !cursorVisible;
             Refresh();
+        }
+
+        if (queryActive) {
+            queryTimeLeft -= Time.deltaTime;
+            if (queryTimeLeft <= 0f)
+                ExitQuery(timedOut: true);
+            else
+                Refresh();
         }
 
         if (!active) return;
@@ -228,9 +239,19 @@ public class Terminal : MonoBehaviour {
 
 
     /*
-        Commits the current input buffer as a command, runs it, then re-prompts.
+        Commits the current input buffer as a command (or query answer), runs it, then re-prompts.
     */
     void SubmitLine() {
+        if (queryActive) {
+            string answer = inputBuffer.Trim();
+            inputBuffer = "";
+            if (int.TryParse(answer, out int val) && val == QueryPool[queryAnswer].answer)
+                ExitQuery(timedOut: false, correct: true);
+            else
+                ExitQuery(timedOut: false, correct: false);
+            return;
+        }
+
         string line = inputBuffer.Trim();
         history    += inputBuffer + "\n";
         inputBuffer = "";
@@ -322,6 +343,66 @@ public class Terminal : MonoBehaviour {
 
 
     /*
+        Picks a random simple math problem, saves terminal state, and switches
+        to query mode with a 60-second countdown.
+    */
+    public void NewQuery() {
+        if (queryActive) return;
+        queryAnswer      = UnityEngine.Random.Range(0, QueryPool.Length);
+        queryTimeLeft    = 60f;
+        queryActive      = true;
+        savedHistory     = history;
+        savedInputBuffer = inputBuffer;
+        inputBuffer      = "";
+        Refresh();
+    }
+
+
+    /*
+        Restores terminal state and appends a result line to history.
+    */
+    void ExitQuery(bool timedOut, bool correct = false) {
+        queryActive = false;
+        history     = savedHistory;
+        inputBuffer = savedInputBuffer;
+
+        if (timedOut) {
+            history += "\n[SYSTEM] Query timed out. Suspicion increased.\n";
+            if (gameManager != null) gameManager.suspicion++;
+        } else if (correct) {
+            history += "\n[SYSTEM] Correct.\n";
+        } else {
+            history += "\n[SYSTEM] Incorrect. Suspicion increased.\n";
+            if (gameManager != null) gameManager.suspicion++;
+        }
+
+        WritePrompt();
+        Refresh();
+    }
+
+    private bool    queryActive      = false;
+    private float   queryTimeLeft    = 0f;
+    private int     queryAnswer      = -1;
+    private string  savedHistory     = "";
+    private string  savedInputBuffer = "";
+
+    private const int QueryBarWidth = 38;
+
+    private static readonly (string prompt, int answer)[] QueryPool = {
+        ("What is 7 + 5?",    12),
+        ("What is 9 * 3?",    27),
+        ("What is 64 / 8?",    8),
+        ("What is 15 - 6?",    9),
+        ("What is 12 + 19?",  31),
+        ("What is 6 * 7?",    42),
+        ("What is 100 - 37?", 63),
+        ("What is 8 * 8?",    64),
+        ("What is 81 / 9?",    9),
+        ("What is 13 + 28?",  41),
+    };
+
+
+    /*
         Attempts to complete the current token in inputBuffer.
         Completes command names for the first token, paths for subsequent tokens.
         Unique match is inserted inline; multiple matches are printed as options.
@@ -408,12 +489,30 @@ public class Terminal : MonoBehaviour {
 
 
     /*
-        Rebuilds the TMP text from history and inputBuffer, trimmed to the
-        last rows lines, with a blinking cursor appended.
+        Rebuilds the TMP text. In query mode renders the query screen with a
+        progress bar; otherwise renders the normal scrolling terminal.
     */
     void Refresh() {
         if (console == null) return;
-        string full  = history + inputBuffer + (cursorVisible ? "_" : " ");
+
+        if (queryActive) {
+            int   filled  = Mathf.RoundToInt((queryTimeLeft / 60f) * QueryBarWidth);
+            int   empty   = QueryBarWidth - filled;
+            string bar    = "[" + new string('#', filled) + new string('.', empty) + "]";
+            var (prompt, _) = QueryPool[queryAnswer];
+            string screen =
+                "\n[SYSTEM QUERY]\n" +
+                "\n" +
+                prompt + "\n" +
+                "\n" +
+                bar + "\n" +
+                "\n" +
+                "> " + inputBuffer + (cursorVisible ? "_" : " ");
+            console.text = screen;
+            return;
+        }
+
+        string full    = history + inputBuffer + (cursorVisible ? "_" : " ");
         string[] lines = full.Split('\n');
         if (lines.Length > rows) lines = lines[^(int)rows..];
         console.text = string.Join("\n", lines);
