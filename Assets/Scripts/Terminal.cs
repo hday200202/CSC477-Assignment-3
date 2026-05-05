@@ -527,7 +527,10 @@ public class Terminal : MonoBehaviour {
     /*
         Subscribes to keyboard text input when the component is enabled.
     */
-    void OnEnable()  { if (Keyboard.current != null) Keyboard.current.onTextInput += OnTextInput; }
+    void OnEnable()  {
+        if (Keyboard.current != null) Keyboard.current.onTextInput += OnTextInput;
+        Refresh();
+    }
 
 
     /*

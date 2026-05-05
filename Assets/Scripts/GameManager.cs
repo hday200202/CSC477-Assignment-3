@@ -15,7 +15,6 @@ public class GameManager : MonoBehaviour {
 
     private float queryTimer    = 0f;
     private float queryInterval = 0f;
-    private bool  queryPending  = false;
 
     void Awake() {
         screens[0].SetActive(true);
@@ -42,11 +41,11 @@ public class GameManager : MonoBehaviour {
     }
 
     void IssueQuery() {
-        if (terminal != null && terminal.activeSelf) {
+        Debug.Log("[GameManager] New query issued.");
+        if (terminal != null) {
             var t = terminal.GetComponent<Terminal>();
             if (t != null) t.NewQuery();
-        } else
-            queryPending = true;
+        }
     }
 
     void ToggleTerminal() {
@@ -54,13 +53,7 @@ public class GameManager : MonoBehaviour {
         bool next = !terminal.activeSelf;
         terminal.SetActive(next);
         var t = terminal.GetComponent<Terminal>();
-        if (t != null) {
-            t.active = next;
-            if (next && queryPending) {
-                queryPending = false;
-                t.NewQuery();
-            }
-        }
+        if (t != null) t.active = next;
     }
 
     public void SubmitScore(string name, int score) {
