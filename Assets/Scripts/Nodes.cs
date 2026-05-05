@@ -41,7 +41,7 @@ public class Nodes : MonoBehaviour
             {
                 nodes[i].color = Color.white;
                 GameObject puzzle = puzzleSelector();
-                Debug.Log(puzzle.name);
+                //GameObject puzzle = puzzles[3];
                 puzzle.SetActive(true);
             }
             minigameManager.GetComponent<MinigameManager>().minigameSuccess = false;
