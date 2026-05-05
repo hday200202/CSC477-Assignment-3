@@ -12,6 +12,7 @@ public class Nodes : MonoBehaviour
     public GameObject winScreen;
     public GameObject[] puzzles;
     public GameObject minigameManager;
+    public GameObject gameManager;
 
     private int i = 0;
 
@@ -41,6 +42,13 @@ public class Nodes : MonoBehaviour
                 puzzle.SetActive(true);
             }
             minigameManager.GetComponent<MinigameManager>().minigameSuccess = false;
+        }
+        if (minigameManager.GetComponent<MinigameManager>().minigameFailure == true)
+        {
+            GameObject puzzle = puzzleSelector();
+            puzzle.SetActive(true);
+            gameManager.GetComponent<GameManager>().suspicion += 1;
+            minigameManager.GetComponent<MinigameManager>().minigameFailure = false;
         }
     }
 

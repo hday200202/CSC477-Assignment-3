@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour {
     public GameObject[] screens;
     public GameObject terminal = null;
 
+    public int suspicion;
+
     void Awake() {
         screens[0].SetActive(true);
         for (int i = 1; i < screens.Length; i++)
@@ -14,6 +16,8 @@ public class GameManager : MonoBehaviour {
 
         HS.Init(this, "Artificial Instinct");
         ClearScores();
+
+        suspicion = 0;
     }
 
     void Update() {
