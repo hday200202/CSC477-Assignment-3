@@ -21,7 +21,7 @@ public class Nodes : MonoBehaviour
     {
         nodes[0].color = Color.white;
         //GameObject puzzle = puzzleSelector();
-        GameObject puzzle = puzzles[3];
+        GameObject puzzle = puzzles[4];
         puzzle.SetActive(true);
         Debug.Log(puzzle.name);
     }

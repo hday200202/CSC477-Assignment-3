@@ -47,6 +47,15 @@ public class GameManager : MonoBehaviour {
                     t.ExpireQuery();
             }
         }
+
+        if (suspicion >= 4)
+        {
+            foreach (GameObject screen in screens)
+            {
+                screen.SetActive(false);
+            }
+            screens[5].SetActive(true);
+        }
     }
 
     void IssueQuery() {
