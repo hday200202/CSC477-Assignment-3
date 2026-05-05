@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class NoahsPuzzle : MonoBehaviour
 {
     public GameObject[] buttons;
+    public GameObject minigameManager;
+    public GameObject slider;
     private string[] solution;
     private GameObject lastClicked;
     private bool succeed;
@@ -20,14 +22,18 @@ public class NoahsPuzzle : MonoBehaviour
                                  "Empty",   "Empty",    "UD",       "UD",       "Empty",
                                  "Empty",   "Empty",    "UR",       "NoDownT",  "LR"};
     }
-    
+
     // Update is called once per frame
     void Update()
     {
        Check();
        if (succeed)
         {
-            Debug.Log("Beat Puzzle");
+            minigameManager.GetComponent<MinigameManager>().minigameSuccess = true;
+            succeed = false;
+            slider.SetActive(false);
+            Debug.Log("Completed");
+
         }
         else
         {

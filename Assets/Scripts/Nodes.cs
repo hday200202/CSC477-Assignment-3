@@ -21,7 +21,9 @@ public class Nodes : MonoBehaviour
     {
         nodes[0].color = Color.white;
         GameObject puzzle = puzzleSelector();
+        //GameObject puzzle = puzzles[2];
         puzzle.SetActive(true);
+        Debug.Log(puzzle.name);
     }
 
     // Update is called once per frame
@@ -39,6 +41,7 @@ public class Nodes : MonoBehaviour
             {
                 nodes[i].color = Color.white;
                 GameObject puzzle = puzzleSelector();
+                Debug.Log(puzzle.name);
                 puzzle.SetActive(true);
             }
             minigameManager.GetComponent<MinigameManager>().minigameSuccess = false;
