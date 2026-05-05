@@ -31,11 +31,13 @@ public class Nodes : MonoBehaviour
     {
         if (minigameManager.GetComponent<MinigameManager>().minigameSuccess == true)
         {
+            gameManager.GetComponent<GameManager>().PuzzleCompleted();
             i++;
             if (i >= nodes.Length)
             {
                 mapScreen.SetActive(false);
                 winScreen.SetActive(true);
+                gameManager.GetComponent<GameManager>().CompleteGame();
             }
             else
             {
@@ -48,6 +50,7 @@ public class Nodes : MonoBehaviour
         }
         if (minigameManager.GetComponent<MinigameManager>().minigameFailure == true)
         {
+            gameManager.GetComponent<GameManager>().PuzzleFailed();
             GameObject puzzle = puzzleSelector();
             puzzle.SetActive(true);
             gameManager.GetComponent<GameManager>().suspicion += 1;
