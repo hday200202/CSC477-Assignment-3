@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using HighScore;
 
 public class GameManager : MonoBehaviour {
@@ -100,6 +101,10 @@ public class GameManager : MonoBehaviour {
         float suspicionMult  = Mathf.Max(0f, 1f - suspicion * 0.2f);
         float timeMult       = 600f / Mathf.Max(1f, totalTime);
         return Mathf.Max(0, Mathf.RoundToInt(baseScore * suspicionMult * timeMult));
+    }
+
+    public void ResetScene() {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void SubmitScore(string name, int score) {
