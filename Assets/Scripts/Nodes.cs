@@ -10,18 +10,23 @@ public class Nodes : MonoBehaviour
     public Image[] nodes;
     public GameObject mapScreen;
     public GameObject winScreen;
+    public GameObject[] puzzles;
+    public GameObject minigameManager;
+
     private int i = 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         nodes[0].color = Color.white;
+        GameObject puzzle = puzzleSelector();
+        puzzle.SetActive(true);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Keyboard.current.enterKey.wasPressedThisFrame)
+        if (minigameManager.GetComponent<MinigameManager>().minigameSuccess == true)
         {
             i++;
             if (i >= nodes.Length)
@@ -32,7 +37,16 @@ public class Nodes : MonoBehaviour
             else
             {
                 nodes[i].color = Color.white;
+                GameObject puzzle = puzzleSelector();
+                puzzle.SetActive(true);
             }
+            minigameManager.GetComponent<MinigameManager>().minigameSuccess = false;
         }
+    }
+
+    public GameObject puzzleSelector()
+    {
+        int randIndex = UnityEngine.Random.Range(0, puzzles.Length);
+        return puzzles[randIndex];
     }
 }
