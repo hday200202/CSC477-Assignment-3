@@ -32,6 +32,7 @@ public class NoahsPuzzle : MonoBehaviour
             minigameManager.GetComponent<MinigameManager>().minigameSuccess = true;
             succeed = false;
             slider.SetActive(false);
+            Reset();
             Debug.Log("Completed");
 
         }
@@ -69,4 +70,22 @@ public class NoahsPuzzle : MonoBehaviour
         }
 
     }
+
+    void Reset()
+    {
+        System.Random rand = new System.Random();
+        for (int i = 0; i < 21; i++) { 
+            int j = rand.Next(25);
+            int k = rand.Next(25);
+            GameObject tileOne = buttons[j];
+            GameObject tileTwo = buttons[k];
+            //swap clicked and last clicked
+            Vector3 tempPos = tileOne.transform.position;
+            tileOne.transform.position = tileTwo.transform.position;
+            tileTwo.transform.position = tempPos;
+            buttons[k] = tileOne;
+            buttons[j] = tileTwo;
+        }
+    }
+
 }
