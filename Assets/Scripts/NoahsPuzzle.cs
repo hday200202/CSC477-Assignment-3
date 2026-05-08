@@ -16,11 +16,11 @@ public class NoahsPuzzle : MonoBehaviour
     {
         succeed = false;
         lastClicked = null;
-        solution = new string[] {"Empty",   "Empty",    "Empty",    "RD",       "LR",
+        solution = new string[] {"Empty",   "Empty",    "Empty",    "RD",       "LRRed",
                                  "Empty",   "Empty",    "RD",       "LU",       "Empty",
                                  "LR",      "LR",       "Cross",    "DL",       "Empty",
-                                 "Empty",   "Empty",    "UD",       "UD",       "Empty",
-                                 "Empty",   "Empty",    "UR",       "NoDownT",  "LR"};
+                                 "Empty",   "Empty",    "UD",       "UDGreen",       "Empty",
+                                 "Empty",   "Empty",    "UR",       "NoDownT",  "LRGB"};
     }
 
     // Update is called once per frame

@@ -14,6 +14,9 @@ TagManager:
   - LU
   - DL
   - Empty
+  - LRRed
+  - LRGB
+  - UDGreen
   layers:
   - Default
   - TransparentFX
