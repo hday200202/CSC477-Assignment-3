@@ -16,6 +16,6 @@ public class Suspicion : MonoBehaviour
     void Update()
     {
         int suspicionCount = gameManager.GetComponent<GameManager>().suspicion;
-        suspicionText.text = "Suspicion: " + suspicionCount;
+        suspicionText.text = suspicionCount.ToString();
     }
 }
