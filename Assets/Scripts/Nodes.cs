@@ -2,6 +2,7 @@ using System;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class Nodes : MonoBehaviour
@@ -15,6 +16,8 @@ public class Nodes : MonoBehaviour
     public GameObject gameManager;
 
     private int i = 0;
+    private Animator animator;
+    private GameObject prevNode;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -23,6 +26,8 @@ public class Nodes : MonoBehaviour
         //GameObject puzzle = puzzleSelector();
         GameObject puzzle = puzzles[0];
         minigameManager.GetComponent<MinigameManager>().startPuzzle(puzzle);
+        animator = nodes[0].GetComponent<Animator>();
+        animator.Play("Pulse");
         Debug.Log(puzzle.name);
     }
 
