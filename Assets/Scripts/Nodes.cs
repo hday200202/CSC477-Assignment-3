@@ -20,8 +20,8 @@ public class Nodes : MonoBehaviour
     void Start()
     {
         nodes[0].color = Color.white;
-        GameObject puzzle = puzzleSelector();
-        //GameObject puzzle = puzzles[4];
+        //GameObject puzzle = puzzleSelector();
+        GameObject puzzle = puzzles[4];
         minigameManager.GetComponent<MinigameManager>().startPuzzle(puzzle);
         Debug.Log(puzzle.name);
     }

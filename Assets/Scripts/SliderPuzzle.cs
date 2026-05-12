@@ -31,6 +31,7 @@ public class SliderPuzzle : MonoBehaviour
             spot.anchoredPosition = new Vector2(UnityEngine.Random.Range(-588, -300), UnityEngine.Random.Range(-328, 100));
             minigameManager.GetComponent<MinigameManager>().minigameStart = false;
         }
+        Debug.Log(spot);
     }
 
     // Update is called once per frame
@@ -39,7 +40,7 @@ public class SliderPuzzle : MonoBehaviour
         box.anchoredPosition = new Vector2(boxX+sliderH.value, box.anchoredPosition.y);
         box.anchoredPosition = new Vector2(box.anchoredPosition.x, boxY + sliderV.value);
 
-        if (Math.Abs(box.anchoredPosition.x-spot.anchoredPosition.x) <= 5 && Math.Abs(box.anchoredPosition.y - spot.anchoredPosition.y) <= 5)
+        if (Math.Abs(box.anchoredPosition.x-spot.anchoredPosition.x) <= 15 && Math.Abs(box.anchoredPosition.y - spot.anchoredPosition.y) <= 15)
         {
             sliderPuzzle.SetActive(false);
             Debug.Log("Complete");

@@ -1,4 +1,7 @@
 using JetBrains.Annotations;
+using NUnit.Framework;
+using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,8 +11,11 @@ public class ButtonOrder : MonoBehaviour
     public Button[] buttons;
     public GameObject buttonOrder;
     public GameObject minigameManager;
+    public TMP_Text instructions;
 
     private int counter;
+    private string solutiontxt;
+    private int[] solution = {1,2,3,4,5,6};
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -26,14 +32,27 @@ public class ButtonOrder : MonoBehaviour
     public void OnEnable()
     {
         if (minigameManager.GetComponent<MinigameManager>().minigameStart == true) {
-            counter = 1;
+            counter = 0;
+            solutiontxt = "";
+
+            for (int i = 0; i < solution.Length; i++)
+            {
+                int temp = solution[i];
+                int randIndex = UnityEngine.Random.Range(i, solution.Length);
+                solution[i] = solution[randIndex];
+                solution[randIndex] = temp;
+                solutiontxt += solution[i] + " ";
+            }
+
+            instructions.text = "Order: " + solutiontxt;
+
             minigameManager.GetComponent<MinigameManager>().minigameStart = false;
         }
     }
 
     public void Update()
     {
-        if (counter == 7)
+        if (counter == 6)
         {
             buttonOrder.SetActive(false);
             minigameManager.GetComponent<MinigameManager>().minigameSuccess = true;
@@ -42,7 +61,7 @@ public class ButtonOrder : MonoBehaviour
 
     public void Button1()
     {
-        if (counter != 1)
+        if (solution[counter] != 1)
         {
             buttonOrder.SetActive(false);
             minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
@@ -51,7 +70,7 @@ public class ButtonOrder : MonoBehaviour
     }
     public void Button2()
     {
-        if (counter != 2)
+        if (solution[counter] != 2)
         {
             buttonOrder.SetActive(false);
             minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
@@ -60,7 +79,7 @@ public class ButtonOrder : MonoBehaviour
     }
     public void Button3()
     {
-        if (counter != 3)
+        if (solution[counter] != 3)
         {
             buttonOrder.SetActive(false);
             minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
@@ -69,7 +88,7 @@ public class ButtonOrder : MonoBehaviour
     }
     public void Button4()
     {
-        if (counter != 4)
+        if (solution[counter] != 4)
         {
             buttonOrder.SetActive(false);
             minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
@@ -78,7 +97,7 @@ public class ButtonOrder : MonoBehaviour
     }
     public void Button5()
     {
-        if (counter != 5)
+        if (solution[counter] != 5)
         {
             buttonOrder.SetActive(false);
             minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
@@ -87,7 +106,7 @@ public class ButtonOrder : MonoBehaviour
     }
     public void Button6()
     {
-        if (counter != 6)
+        if (solution[counter] != 6)
         {
             buttonOrder.SetActive(false);
             minigameManager.GetComponent<MinigameManager>().minigameFailure = true;

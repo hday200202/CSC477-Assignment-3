@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class MinigameManager : MonoBehaviour
@@ -7,6 +8,7 @@ public class MinigameManager : MonoBehaviour
     public bool minigameStart = false;
 
     public GameObject[] puzzles;
+    public GameObject mapNotif;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -20,7 +22,14 @@ public class MinigameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (minigameSuccess == true)
+        {
+            mapNotif.SetActive(true);
+        }
+        else
+        {
+            mapNotif.SetActive(false);
+        }
     }
 
     public void startPuzzle(GameObject puzzle)
