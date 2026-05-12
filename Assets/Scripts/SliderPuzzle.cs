@@ -11,6 +11,9 @@ public class SliderPuzzle : MonoBehaviour
     public GameObject minigameManager;
     public GameObject sliderPuzzle;
     public TMP_Text time_display;
+    public AudioSource audioSrc;
+    public AudioClip success;
+    public AudioClip failure;
 
     public Slider sliderH;
     public Slider sliderV;
@@ -48,6 +51,7 @@ public class SliderPuzzle : MonoBehaviour
         if (timer <= 0)
         {
             sliderPuzzle.SetActive(false);
+            audioSrc.PlayOneShot(failure);
             minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
         }
 
@@ -61,6 +65,7 @@ public class SliderPuzzle : MonoBehaviour
             sliderH.value = 0;
             sliderV.value = 0;
             minigameManager.GetComponent<MinigameManager>().minigameSuccess = true;
+            audioSrc.PlayOneShot(success);
         }
     }
 }

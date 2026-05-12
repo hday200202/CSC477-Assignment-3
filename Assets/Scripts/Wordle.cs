@@ -13,6 +13,9 @@ public class Wordle : MonoBehaviour
     public TMP_Text[] wordspaces;
     public GameObject wordle;
     public GameObject minigameManager;
+    public AudioSource audioSrc;
+    public AudioClip success;
+    public AudioClip failure;
 
 
     private string[] wordLibrary = { "kitty", "ready", "stars", "hello", "world" };
@@ -85,6 +88,7 @@ public class Wordle : MonoBehaviour
             {
                 wordle.SetActive(false);
                 minigameManager.GetComponent<MinigameManager>().minigameSuccess = true;
+                audioSrc.PlayOneShot(success);
                 boardClear();
             }
 
@@ -94,6 +98,7 @@ public class Wordle : MonoBehaviour
             {
                 wordle.SetActive(false);
                 minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
+                audioSrc.PlayOneShot(failure);
                 boardClear();
             }
         }

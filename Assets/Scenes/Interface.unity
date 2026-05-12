@@ -4072,6 +4072,9 @@ MonoBehaviour:
   minigameManager: {fileID: 1489739816}
   sliderPuzzle: {fileID: 266613405}
   time_display: {fileID: 1474033489}
+  audioSrc: {fileID: 3444893032077507625}
+  success: {fileID: 8300000, guid: 15f5d8bf21d8b2a43885e58ca4ba6262, type: 3}
+  failure: {fileID: 8300000, guid: c67a5bc8eb871d343b9f33e4990f712d, type: 3}
   sliderH: {fileID: 417462488}
   sliderV: {fileID: 1428694581}
 --- !u!1 &275021943
@@ -6981,6 +6984,9 @@ MonoBehaviour:
   minigameManager: {fileID: 1489739816}
   instructions: {fileID: 1258085631}
   time_display: {fileID: 1332980156}
+  audioSrc: {fileID: 3444893032077507625}
+  success: {fileID: 8300000, guid: 15f5d8bf21d8b2a43885e58ca4ba6262, type: 3}
+  failure: {fileID: 8300000, guid: c67a5bc8eb871d343b9f33e4990f712d, type: 3}
 --- !u!1 &538318008
 GameObject:
   m_ObjectHideFlags: 0
@@ -8396,6 +8402,9 @@ MonoBehaviour:
   minigameManager: {fileID: 1489739816}
   instructions: {fileID: 745197986}
   time_display: {fileID: 1871495670}
+  audioSrc: {fileID: 3444893032077507625}
+  success: {fileID: 8300000, guid: 15f5d8bf21d8b2a43885e58ca4ba6262, type: 3}
+  failure: {fileID: 8300000, guid: c67a5bc8eb871d343b9f33e4990f712d, type: 3}
 --- !u!1 &610531003
 GameObject:
   m_ObjectHideFlags: 0
@@ -25479,6 +25488,9 @@ MonoBehaviour:
   - {fileID: 802829530}
   minigameManager: {fileID: 1489739816}
   slider: {fileID: 1613377128}
+  audioSrc: {fileID: 3444893032077507625}
+  success: {fileID: 8300000, guid: 15f5d8bf21d8b2a43885e58ca4ba6262, type: 3}
+  failure: {fileID: 8300000, guid: c67a5bc8eb871d343b9f33e4990f712d, type: 3}
   time_display: {fileID: 415426104}
 --- !u!114 &1613377130
 MonoBehaviour:
@@ -30917,6 +30929,9 @@ MonoBehaviour:
   - {fileID: 447325408}
   wordle: {fileID: 1500982358}
   minigameManager: {fileID: 1489739816}
+  audioSrc: {fileID: 3444893032077507625}
+  success: {fileID: 8300000, guid: 15f5d8bf21d8b2a43885e58ca4ba6262, type: 3}
+  failure: {fileID: 8300000, guid: c67a5bc8eb871d343b9f33e4990f712d, type: 3}
 --- !u!1 &2053094528
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,6 +13,9 @@ public class ButtonOrder : MonoBehaviour
     public GameObject minigameManager;
     public TMP_Text instructions;
     public TMP_Text time_display;
+    public AudioSource audioSrc;
+    public AudioClip success;
+    public AudioClip failure;
 
     private int counter;
     private string solutiontxt;
@@ -61,12 +64,14 @@ public class ButtonOrder : MonoBehaviour
         if (timer <= 0)
         {
             buttonOrder.SetActive(false);
+            audioSrc.PlayOneShot(failure);
             minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
         }
 
         if (counter == 6)
         {
             buttonOrder.SetActive(false);
+            audioSrc.PlayOneShot(success);
             minigameManager.GetComponent<MinigameManager>().minigameSuccess = true;
         }
     }
@@ -76,6 +81,7 @@ public class ButtonOrder : MonoBehaviour
         if (solution[counter] != 1)
         {
             buttonOrder.SetActive(false);
+            audioSrc.PlayOneShot(failure);
             minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
         }
         counter++;
@@ -85,6 +91,7 @@ public class ButtonOrder : MonoBehaviour
         if (solution[counter] != 2)
         {
             buttonOrder.SetActive(false);
+            audioSrc.PlayOneShot(failure);
             minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
         }
         counter++;
@@ -94,6 +101,7 @@ public class ButtonOrder : MonoBehaviour
         if (solution[counter] != 3)
         {
             buttonOrder.SetActive(false);
+            audioSrc.PlayOneShot(failure);
             minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
         }
         counter++;
@@ -103,6 +111,7 @@ public class ButtonOrder : MonoBehaviour
         if (solution[counter] != 4)
         {
             buttonOrder.SetActive(false);
+            audioSrc.PlayOneShot(failure);
             minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
         }
         counter++;
@@ -112,6 +121,7 @@ public class ButtonOrder : MonoBehaviour
         if (solution[counter] != 5)
         {
             buttonOrder.SetActive(false);
+            audioSrc.PlayOneShot(failure);
             minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
         }
         counter++;
@@ -121,6 +131,7 @@ public class ButtonOrder : MonoBehaviour
         if (solution[counter] != 6)
         {
             buttonOrder.SetActive(false);
+            audioSrc.PlayOneShot(failure);
             minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
         }
         counter++;

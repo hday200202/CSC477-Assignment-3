@@ -9,6 +9,9 @@ public class NoahsPuzzle : MonoBehaviour
     public GameObject[] buttons;
     public GameObject minigameManager;
     public GameObject slider;
+    public AudioSource audioSrc;
+    public AudioClip success;
+    public AudioClip failure;
     public TMP_Text time_display;
 
     private string[] solution;
@@ -36,6 +39,7 @@ public class NoahsPuzzle : MonoBehaviour
         if (timer <= 0)
         {
             slider.SetActive(false);
+            audioSrc.PlayOneShot(failure);
             minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
         }
 
@@ -45,6 +49,7 @@ public class NoahsPuzzle : MonoBehaviour
             minigameManager.GetComponent<MinigameManager>().minigameSuccess = true;
             succeed = false;
             slider.SetActive(false);
+            audioSrc.PlayOneShot(success);
             Reset();
             Debug.Log("Completed");
 
