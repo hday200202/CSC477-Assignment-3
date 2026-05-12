@@ -12,10 +12,12 @@ public class ButtonOrder : MonoBehaviour
     public GameObject buttonOrder;
     public GameObject minigameManager;
     public TMP_Text instructions;
+    public TMP_Text time_display;
 
     private int counter;
     private string solutiontxt;
     private int[] solution = {1,2,3,4,5,6};
+    private float timer = 12;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -33,6 +35,7 @@ public class ButtonOrder : MonoBehaviour
     {
         if (minigameManager.GetComponent<MinigameManager>().minigameStart == true) {
             counter = 0;
+            timer = 12;
             solutiontxt = "";
 
             for (int i = 0; i < solution.Length; i++)
@@ -52,6 +55,15 @@ public class ButtonOrder : MonoBehaviour
 
     public void Update()
     {
+        timer -= Time.deltaTime;
+        time_display.text = "Time remaining: " + timer;
+
+        if (timer <= 0)
+        {
+            buttonOrder.SetActive(false);
+            minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
+        }
+
         if (counter == 6)
         {
             buttonOrder.SetActive(false);

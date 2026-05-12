@@ -10,12 +10,14 @@ public class Captcha : MonoBehaviour
     public GameObject captcha;
     public GameObject minigameManager;
     public TMP_Text instructions;
+    public TMP_Text time_display;
 
     private static string[] color = { "orange one", "blue one", "green one", "pink one" };
     private static string[] number = {"number 1", "number 2", "number 3", "number 4"};
     private static string[] shape = {"square", "triangle", "hexagon", "circle"};
     private string[][] options = { color, number, shape };
     private string selectedTrait;
+    private float timer = 10;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -31,13 +33,22 @@ public class Captcha : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        timer -= Time.deltaTime;
+        time_display.text = "Time remaining: " + timer;
+
+        if (timer <= 0)
+        {
+            captcha.SetActive(false);
+            minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
+        }
     }
 
     public void OnEnable()
     {
         if (minigameManager.GetComponent<MinigameManager>().minigameStart == true)
         {
+            timer = 10;
+
             string[] selectedList = options[UnityEngine.Random.Range(0, options.Length)];
             selectedTrait = selectedList[UnityEngine.Random.Range(0, selectedList.Length)];
             Debug.Log(selectedTrait);

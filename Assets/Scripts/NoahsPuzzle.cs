@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,9 +9,12 @@ public class NoahsPuzzle : MonoBehaviour
     public GameObject[] buttons;
     public GameObject minigameManager;
     public GameObject slider;
+    public TMP_Text time_display;
+
     private string[] solution;
     private GameObject lastClicked;
     private bool succeed;
+    private float timer = 40;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -26,7 +30,16 @@ public class NoahsPuzzle : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       Check();
+        timer -= Time.deltaTime;
+        time_display.text = "Time remaining: " + timer;
+
+        if (timer <= 0)
+        {
+            slider.SetActive(false);
+            minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
+        }
+
+        Check();
        if (succeed)
         {
             minigameManager.GetComponent<MinigameManager>().minigameSuccess = true;
@@ -86,6 +99,7 @@ public class NoahsPuzzle : MonoBehaviour
             buttons[k] = tileOne;
             buttons[j] = tileTwo;
         }
+        timer = 40;
     }
 
 }

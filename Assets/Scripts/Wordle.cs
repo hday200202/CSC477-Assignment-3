@@ -71,10 +71,12 @@ public class Wordle : MonoBehaviour
                     wordspaces[i+lineCount].color = Color.green;
                     alreadyContains += letterinput[i];
                 }
-                else if (selectedWord.Contains(letterinput[i]) && alreadyContains.Contains(letterinput[i]) != true)
+                else if (selectedWord.Contains(letterinput[i]))
                 {
                     wordspaces[i + lineCount].color = Color.yellow;
-                    alreadyContains += letterinput[i];
+                    if (alreadyContains.Contains(letterinput[i]) != true) {
+                        alreadyContains += letterinput[i];
+                    }
                 }
                     wordspaces[i + lineCount].text = letterinput[i].ToString();
             }

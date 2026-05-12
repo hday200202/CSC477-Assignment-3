@@ -22,7 +22,7 @@ public class MinigameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (minigameSuccess == true)
+        if (minigameSuccess == true || minigameFailure == true)
         {
             mapNotif.SetActive(true);
         }
