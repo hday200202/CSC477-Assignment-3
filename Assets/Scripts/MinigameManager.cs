@@ -10,6 +10,7 @@ public class MinigameManager : MonoBehaviour
     public GameObject[] puzzles;
     public GameObject mapNotif;
 
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {

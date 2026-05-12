@@ -23,8 +23,8 @@ public class Nodes : MonoBehaviour
     void Start()
     {
         nodes[0].color = Color.white;
-        //GameObject puzzle = puzzleSelector();
-        GameObject puzzle = puzzles[0];
+        GameObject puzzle = puzzleSelector();
+        //GameObject puzzle = puzzles[0];
         minigameManager.GetComponent<MinigameManager>().startPuzzle(puzzle);
         animator = nodes[0].GetComponent<Animator>();
         prevNode = animator;
@@ -47,11 +47,14 @@ public class Nodes : MonoBehaviour
             }
             else
             {
-                prevNode.enabled = false;
                 nodes[i].color = Color.white;
-                animator = nodes[i].GetComponent<Animator>();
-                animator.enabled = true;
-                prevNode = animator;
+                if (i < 5)
+                {
+                    prevNode.enabled = false;
+                    animator = nodes[i].GetComponent<Animator>();
+                    animator.enabled = true;
+                    prevNode = animator;
+                }
                 GameObject puzzle = puzzleSelector();
                 minigameManager.GetComponent<MinigameManager>().startPuzzle(puzzle);
                 puzzle.SetActive(true);
