@@ -25,7 +25,10 @@ public class ButtonOrder : MonoBehaviour
     // Update is called once per frame
     public void OnEnable()
     {
-        counter = 1;
+        if (minigameManager.GetComponent<MinigameManager>().minigameStart == true) {
+            counter = 1;
+            minigameManager.GetComponent<MinigameManager>().minigameStart = false;
+        }
     }
 
     public void Update()

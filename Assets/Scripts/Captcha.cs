@@ -36,11 +36,15 @@ public class Captcha : MonoBehaviour
 
     public void OnEnable()
     {
-        string[] selectedList = options[UnityEngine.Random.Range(0, options.Length)];
-        selectedTrait = selectedList[UnityEngine.Random.Range(0, selectedList.Length)];
-        Debug.Log(selectedTrait);
+        if (minigameManager.GetComponent<MinigameManager>().minigameStart == true)
+        {
+            string[] selectedList = options[UnityEngine.Random.Range(0, options.Length)];
+            selectedTrait = selectedList[UnityEngine.Random.Range(0, selectedList.Length)];
+            Debug.Log(selectedTrait);
 
-        instructions.text = "Click the " + selectedTrait + ".";
+            instructions.text = "Click the " + selectedTrait + ".";
+            minigameManager.GetComponent<MinigameManager>().minigameStart = false;
+        }
     }
 
     private void Button1()

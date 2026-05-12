@@ -25,8 +25,12 @@ public class SliderPuzzle : MonoBehaviour
 
     public void OnEnable()
     {
-        box.anchoredPosition = new Vector2(-588, -328);
-        spot.anchoredPosition = new Vector2(UnityEngine.Random.Range(-588, -300), UnityEngine.Random.Range(-328, 100));
+        if (minigameManager.GetComponent<MinigameManager>().minigameStart == true)
+        {
+            box.anchoredPosition = new Vector2(-588, -328);
+            spot.anchoredPosition = new Vector2(UnityEngine.Random.Range(-588, -300), UnityEngine.Random.Range(-328, 100));
+            minigameManager.GetComponent<MinigameManager>().minigameStart = false;
+        }
     }
 
     // Update is called once per frame

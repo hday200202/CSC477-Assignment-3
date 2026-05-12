@@ -9439,7 +9439,6 @@ RectTransform:
   m_LocalScale: {x: 0.85, y: 0.85, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1489739817}
   - {fileID: 1613377133}
   - {fileID: 1500982359}
   - {fileID: 606702201}
@@ -11927,7 +11926,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &857105008
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21943,11 +21942,11 @@ Transform:
   m_GameObject: {fileID: 1489739816}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -190.24811, y: -99.84248, z: -2347.8262}
-  m_LocalScale: {x: 23.478262, y: 23.478262, z: 23.478262}
+  m_LocalPosition: {x: -8.983938, y: -4.714784, z: -30.434784}
+  m_LocalScale: {x: 1.1086957, y: 1.1086957, z: 1.3043479}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 684399789}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1489739818
 MonoBehaviour:
@@ -21963,6 +21962,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MinigameManager
   minigameSuccess: 0
   minigameFailure: 0
+  minigameStart: 0
   puzzles:
   - {fileID: 1500982358}
   - {fileID: 1613377128}
@@ -31406,5 +31406,6 @@ SceneRoots:
   - {fileID: 857105011}
   - {fileID: 1424818670}
   - {fileID: 1773351640}
+  - {fileID: 1489739817}
   - {fileID: 1016178026}
   - {fileID: 1674669108}

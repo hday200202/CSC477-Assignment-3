@@ -28,11 +28,15 @@ public class Wordle : MonoBehaviour
 
     private void OnEnable()
     {
-        selectedWord = wordLibrary[UnityEngine.Random.Range(0, wordLibrary.Length)];
-        Debug.Log(selectedWord);
+        if (minigameManager.GetComponent<MinigameManager>().minigameStart == true)
+        {
+            selectedWord = wordLibrary[UnityEngine.Random.Range(0, wordLibrary.Length)];
+            Debug.Log(selectedWord);
 
-        lineCount = 0;
-        alreadyContains = "";
+            lineCount = 0;
+            alreadyContains = "";
+            minigameManager.GetComponent<MinigameManager>().minigameStart = false;
+        }
     }
 
     // Update is called once per frame

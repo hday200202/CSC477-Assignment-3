@@ -4,6 +4,7 @@ public class MinigameManager : MonoBehaviour
 {
     public bool minigameSuccess = false;
     public bool minigameFailure = false;
+    public bool minigameStart = false;
 
     public GameObject[] puzzles;
 
@@ -20,5 +21,11 @@ public class MinigameManager : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void startPuzzle(GameObject puzzle)
+    {
+        puzzle.SetActive(true);
+        minigameStart = true;
     }
 }
