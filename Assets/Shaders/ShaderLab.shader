@@ -45,7 +45,7 @@ Shader "Custom/ShaderLab"
 
             fixed4 frag(v2f f) : COLOR {
                 fixed4 texel = tex2D(_MainTex,f.uv);
-                return fixed4(f.color.r, f.color.g, f.color.b, 1.0) * 0.1;
+                return fixed4(f.color.r, f.color.g, f.color.b, 1.0) * texel;
             }
             ENDCG
         }
