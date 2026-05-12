@@ -12,10 +12,11 @@ public class GameManager : MonoBehaviour {
     public float queryIntervalMin   = 20f;
     public float queryIntervalMax   = 60f;
 
-    public int suspicion;
-    public int completedPuzzles     = 0;
-    public int failedPuzzles        = 0;
-    public float totalTime          = 0f;
+    public int   suspicion          = 0;
+    public int   completedPuzzles  = 0;
+    public int   failedPuzzles     = 0;
+    public float totalTime         = 0f;
+    public bool  gameOver          = false;
 
     private float queryTimer        = 0f;
     private float queryInterval     = 0f;
@@ -36,7 +37,7 @@ public class GameManager : MonoBehaviour {
     }
 
     void Update() {
-        totalTime += Time.deltaTime;
+        if (!gameOver) totalTime += Time.deltaTime;
 
         if (Keyboard.current.ctrlKey.isPressed && Keyboard.current.tKey.wasPressedThisFrame)
             ToggleTerminal();
@@ -59,6 +60,7 @@ public class GameManager : MonoBehaviour {
 
         if (suspicion >= 4)
         {
+            gameOver = true;
             foreach (GameObject screen in screens)
                 screen.SetActive(false);
             screens[5].SetActive(true);
@@ -85,6 +87,7 @@ public class GameManager : MonoBehaviour {
     public void PuzzleFailed()    { failedPuzzles++; }
 
     public void CompleteGame(string playerName = "Player") {
+        gameOver  = true;
         totalTime = Mathf.Max(1f, totalTime);
         int score = CalculateScore();
         SubmitScore(playerName, score);
