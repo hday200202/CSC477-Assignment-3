@@ -17,7 +17,7 @@ public class Nodes : MonoBehaviour
 
     private int i = 0;
     private Animator animator;
-    private GameObject prevNode;
+    private Animator prevNode;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -27,7 +27,8 @@ public class Nodes : MonoBehaviour
         GameObject puzzle = puzzles[0];
         minigameManager.GetComponent<MinigameManager>().startPuzzle(puzzle);
         animator = nodes[0].GetComponent<Animator>();
-        animator.Play("Pulse");
+        prevNode = animator;
+        animator.enabled = true;
         Debug.Log(puzzle.name);
     }
 
@@ -46,7 +47,11 @@ public class Nodes : MonoBehaviour
             }
             else
             {
+                prevNode.enabled = false;
                 nodes[i].color = Color.white;
+                animator = nodes[i].GetComponent<Animator>();
+                animator.enabled = true;
+                prevNode = animator;
                 GameObject puzzle = puzzleSelector();
                 minigameManager.GetComponent<MinigameManager>().startPuzzle(puzzle);
                 puzzle.SetActive(true);
