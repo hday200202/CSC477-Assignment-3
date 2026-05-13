@@ -48,7 +48,7 @@ public class Nodes : MonoBehaviour
             else
             {
                 nodes[i].color = Color.white;
-                if (i < 5)
+                if (i < 10)
                 {
                     prevNode.enabled = false;
                     animator = nodes[i].GetComponent<Animator>();

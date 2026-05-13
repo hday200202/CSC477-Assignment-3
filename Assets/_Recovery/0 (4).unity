@@ -9161,7 +9161,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Press the buttons in the order displayed below.
+  m_text: Press the buttons in numerical order as fast as possible.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 02f5b6e38c1004469be05327c0f20679, type: 2}
   m_sharedMaterial: {fileID: 4923309334512984067, guid: 02f5b6e38c1004469be05327c0f20679, type: 2}
@@ -13155,7 +13155,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &857105008
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15742,7 +15742,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1019443018
@@ -16562,8 +16562,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Complete all nodes to break out of this facility. Nodes progress automatically
-    when you complete a minigame. '
+  m_text: Complete all nodes to break out of this facility.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 02f5b6e38c1004469be05327c0f20679, type: 2}
   m_sharedMaterial: {fileID: 4923309334512984067, guid: 02f5b6e38c1004469be05327c0f20679, type: 2}
@@ -16629,7 +16628,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: -132.48271}
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -19644,7 +19643,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: -30.050041, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -22256,7 +22255,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1424818667
 MonoBehaviour:
   m_ObjectHideFlags: 0
