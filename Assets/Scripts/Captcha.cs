@@ -20,7 +20,7 @@ public class Captcha : MonoBehaviour
     private static string[] shape = {"square", "triangle", "hexagon", "circle"};
     private string[][] options = { color, number, shape };
     private string selectedTrait;
-    private float timer = 10;
+    private float timer = 15;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -51,7 +51,7 @@ public class Captcha : MonoBehaviour
     {
         if (minigameManager.GetComponent<MinigameManager>().minigameStart == true)
         {
-            timer = 10;
+            timer = 15;
 
             string[] selectedList = options[UnityEngine.Random.Range(0, options.Length)];
             selectedTrait = selectedList[UnityEngine.Random.Range(0, selectedList.Length)];

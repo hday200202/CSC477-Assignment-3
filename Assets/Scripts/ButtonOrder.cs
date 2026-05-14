@@ -20,7 +20,7 @@ public class ButtonOrder : MonoBehaviour
     private int counter;
     private string solutiontxt;
     private int[] solution = {1,2,3,4,5,6};
-    private float timer = 12;
+    private float timer = 20;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -38,7 +38,7 @@ public class ButtonOrder : MonoBehaviour
     {
         if (minigameManager.GetComponent<MinigameManager>().minigameStart == true) {
             counter = 0;
-            timer = 12;
+            timer = 20;
             solutiontxt = "";
 
             for (int i = 0; i < solution.Length; i++)

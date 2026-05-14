@@ -17,7 +17,7 @@ public class NoahsPuzzle : MonoBehaviour
     private string[] solution;
     private GameObject lastClicked;
     private bool succeed;
-    private float timer = 40;
+    private float timer = 80;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -104,7 +104,7 @@ public class NoahsPuzzle : MonoBehaviour
             buttons[k] = tileOne;
             buttons[j] = tileTwo;
         }
-        timer = 40;
+        timer = 80;
     }
 
 }
