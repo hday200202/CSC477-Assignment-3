@@ -48,13 +48,10 @@ public class Nodes : MonoBehaviour
             else
             {
                 nodes[i].color = Color.white;
-                if (i < 10)
-                {
-                    prevNode.enabled = false;
-                    animator = nodes[i].GetComponent<Animator>();
-                    animator.enabled = true;
-                    prevNode = animator;
-                }
+                prevNode.enabled = false;
+                animator = nodes[i].GetComponent<Animator>();
+                animator.enabled = true;
+                prevNode = animator;
                 GameObject puzzle = puzzleSelector();
                 minigameManager.GetComponent<MinigameManager>().startPuzzle(puzzle);
                 puzzle.SetActive(true);
