@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour {
         for (int i = 1; i < screens.Length; i++)
             screens[i].SetActive(false);
 
-        HS.Init(this, "Artificial Instinct");
+        HS.Init(this, "Artificial Facade");
         ClearScores();
 
         suspicion        = 0;

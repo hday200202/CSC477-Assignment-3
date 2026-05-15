@@ -9,7 +9,7 @@ public class Game : MonoBehaviour
 
     void Awake()
     {
-        HS.Init(this, "Artificial Instinct");
+        HS.Init(this, "Artificial Facade");
         ClearScores();
     }
 
