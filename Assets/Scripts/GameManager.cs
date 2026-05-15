@@ -6,20 +6,21 @@ using HighScore;
 
 public class GameManager : MonoBehaviour {
     public GameObject[] screens;
-    public GameObject terminal      = null;
+    public GameObject terminal = null;
 
     [Header("Query Timer")]
-    public float queryIntervalMin   = 20f;
-    public float queryIntervalMax   = 60f;
+    public float queryIntervalMin = 20f;
+    public float queryIntervalMax = 60f;
 
-    public int   suspicion          = 0;
-    public int   completedPuzzles  = 0;
-    public int   failedPuzzles     = 0;
-    public float totalTime         = 0f;
-    public bool  gameOver          = false;
+    public int suspicion = 0;
+    public int completedPuzzles = 0;
+    public int failedPuzzles = 0;
+    public float totalTime = 0f;
+    public bool gameOver = false;
+    public bool gameStart = false;
 
-    private float queryTimer        = 0f;
-    private float queryInterval     = 0f;
+    private float queryTimer = 0f;
+    private float queryInterval = 0f;
 
     void Awake() {
         screens[0].SetActive(true);
@@ -29,22 +30,22 @@ public class GameManager : MonoBehaviour {
         HS.Init(this, "Artificial Facade");
         ClearScores();
 
-        suspicion        = 0;
+        suspicion = 0;
         completedPuzzles = 0;
-        failedPuzzles    = 0;
-        totalTime        = 0f;
-        queryInterval    = Random.Range(queryIntervalMin, queryIntervalMax);
+        failedPuzzles = 0;
+        totalTime = 0f;
+        queryInterval = Random.Range(queryIntervalMin, queryIntervalMax);
     }
 
     void Update() {
-        if (!gameOver) totalTime += Time.deltaTime;
+        if (!gameOver & gameStart) totalTime += Time.deltaTime;
 
         if (Keyboard.current.ctrlKey.isPressed && Keyboard.current.tKey.wasPressedThisFrame)
             ToggleTerminal();
 
         queryTimer += Time.deltaTime;
         if (queryTimer >= queryInterval) {
-            queryTimer    = 0f;
+            queryTimer = 0f;
             queryInterval = Random.Range(queryIntervalMin, queryIntervalMax);
             IssueQuery();
         }
@@ -84,10 +85,10 @@ public class GameManager : MonoBehaviour {
     }
 
     public void PuzzleCompleted() { completedPuzzles++; }
-    public void PuzzleFailed()    { failedPuzzles++; }
+    public void PuzzleFailed() { failedPuzzles++; }
 
     public void CompleteGame(string playerName = "Player") {
-        gameOver  = true;
+        gameOver = true;
         totalTime = Mathf.Max(1f, totalTime);
         int score = CalculateScore();
         SubmitScore(playerName, score);
@@ -100,9 +101,9 @@ public class GameManager : MonoBehaviour {
         timeMult: 600/totalTime, so finishing in 10 min = 1.0; faster = higher
     */
     public int CalculateScore() {
-        int   baseScore      = (completedPuzzles - failedPuzzles) * 300;
-        float suspicionMult  = Mathf.Max(0f, 1f - suspicion * 0.2f);
-        float timeMult       = 600f / Mathf.Max(1f, totalTime);
+        int baseScore = (completedPuzzles - failedPuzzles) * 300;
+        float suspicionMult = Mathf.Max(0f, 1f - suspicion * 0.2f);
+        float timeMult = 600f / Mathf.Max(1f, totalTime);
         return Mathf.Max(0, Mathf.RoundToInt(baseScore * suspicionMult * timeMult));
     }
 
@@ -117,4 +118,10 @@ public class GameManager : MonoBehaviour {
     public void ClearScores() {
         HS.Clear(this);
     }
+
+    public void StartGame()
+    { 
+        gameStart = true;
+    }
+
 }
