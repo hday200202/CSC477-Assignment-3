@@ -3,10 +3,11 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using HighScore;
+using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour {
     public GameObject[] screens;
-    public GameObject terminal = null;
+    public Terminal terminal      = null;
 
     [Header("Query Timer")]
     public float queryIntervalMin = 20f;
@@ -40,10 +41,10 @@ public class GameManager : MonoBehaviour {
     void Update() {
         if (!gameOver & gameStart) totalTime += Time.deltaTime;
 
-        if (Keyboard.current.ctrlKey.isPressed && Keyboard.current.tKey.wasPressedThisFrame)
+        if (Keyboard.current != null && Keyboard.current.ctrlKey.isPressed && Keyboard.current.tKey.wasPressedThisFrame)
             ToggleTerminal();
 
-        queryTimer += Time.deltaTime;
+        if (terminal != null && terminal.termState != "snake") queryTimer += Time.deltaTime;
         if (queryTimer >= queryInterval) {
             queryTimer = 0f;
             queryInterval = Random.Range(queryIntervalMin, queryIntervalMax);
@@ -78,8 +79,8 @@ public class GameManager : MonoBehaviour {
 
     void ToggleTerminal() {
         if (terminal == null) return;
-        bool next = !terminal.activeSelf;
-        terminal.SetActive(next);
+        bool next = !terminal.gameObject.activeSelf;
+        terminal.gameObject.SetActive(next);
         var t = terminal.GetComponent<Terminal>();
         if (t != null) t.active = next;
     }

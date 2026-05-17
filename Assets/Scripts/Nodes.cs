@@ -18,6 +18,7 @@ public class Nodes : MonoBehaviour
     private int i = 0;
     private Animator animator;
     private Animator prevNode;
+    private int pendingAdvances = 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -30,6 +31,11 @@ public class Nodes : MonoBehaviour
         prevNode = animator;
         animator.enabled = true;
         Debug.Log(puzzle.name);
+        if (pendingAdvances > 0) {
+            int pending = pendingAdvances;
+            pendingAdvances = 0;
+            AdvanceNodes(pending);
+        }
     }
 
     // Update is called once per frame
@@ -47,6 +53,7 @@ public class Nodes : MonoBehaviour
             }
             else
             {
+                foreach (var p in puzzles) p.SetActive(false);
                 nodes[i].color = Color.white;
                 prevNode.enabled = false;
                 animator = nodes[i].GetComponent<Animator>();
@@ -54,18 +61,48 @@ public class Nodes : MonoBehaviour
                 prevNode = animator;
                 GameObject puzzle = puzzleSelector();
                 minigameManager.GetComponent<MinigameManager>().startPuzzle(puzzle);
-                puzzle.SetActive(true);
             }
             minigameManager.GetComponent<MinigameManager>().minigameSuccess = false;
         }
         if (minigameManager.GetComponent<MinigameManager>().minigameFailure == true)
         {
             gameManager.GetComponent<GameManager>().PuzzleFailed();
+            foreach (var p in puzzles) p.SetActive(false);
             GameObject puzzle = puzzleSelector();
             minigameManager.GetComponent<MinigameManager>().startPuzzle(puzzle);
             gameManager.GetComponent<GameManager>().suspicion += 1;
             minigameManager.GetComponent<MinigameManager>().minigameFailure = false;
         }
+    }
+
+    public void AdvanceNodes(int count) {
+        if (prevNode == null) {
+            pendingAdvances += count;
+            for (int j = 0; j < count; j++)
+                gameManager.GetComponent<GameManager>().PuzzleCompleted();
+            return;
+        }
+        foreach (var p in puzzles) p.SetActive(false);
+        if (prevNode != null) {
+            prevNode.Rebind();
+            prevNode.Update(0f);
+        }
+        for (int j = 0; j < count; j++) {
+            gameManager.GetComponent<GameManager>().PuzzleCompleted();
+            i++;
+            if (i >= nodes.Length) {
+                mapScreen.SetActive(false);
+                winScreen.SetActive(true);
+                gameManager.GetComponent<GameManager>().CompleteGame();
+                return;
+            }
+            nodes[i].color = Color.white;
+            prevNode.enabled = false;
+            animator = nodes[i].GetComponent<Animator>();
+            animator.enabled = true;
+            prevNode = animator;
+        }
+        minigameManager.GetComponent<MinigameManager>().startPuzzle(puzzleSelector());
     }
 
     public GameObject puzzleSelector()

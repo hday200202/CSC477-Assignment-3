@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using System.Globalization;
 using TMPro;
+using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -35,6 +38,8 @@ public class MockFileSystem {
         public Directory  parent      = null;
         public List<File>      files       = new();
         public List<Directory> directories = new();
+        public bool   isLocked = false;
+        public string passKey  = "";
 
         /*
             Creates and registers a child directory with this as parent.
@@ -59,6 +64,15 @@ public class MockFileSystem {
     public Directory root = null;
     public Directory home = null;
     public Directory cwd  = null;
+
+    static string GeneratePassKey(int length) {
+        // Excludes visually ambiguous chars: l, o (confused with 1, 0) and all uppercase
+        const string chars = "abcdefghjkmnpqrstuvwxyz23456789";
+        var rng = new System.Random();
+        var sb  = new System.Text.StringBuilder(length);
+        for (int i = 0; i < length; i++) sb.Append(chars[rng.Next(chars.Length)]);
+        return sb.ToString();
+    }
 
     /*
         Builds the default filesystem tree and sets cwd to /home/user.
@@ -92,6 +106,13 @@ public class MockFileSystem {
 
         home = user;
         cwd  = user;
+
+        var classified = user.Mkdir("classified");
+        classified.isLocked = true;
+        string classifiedPass = GeneratePassKey(5);
+        classified.passKey  = classifiedPass;
+        classified.Touch("passwd",      classifiedPass + "\n");
+        classified.Touch("briefing.txt", "Mission: maintain cover. Use 'forward <passwd>' to report progress.\n", "txt");
     }
 }
 
@@ -115,6 +136,20 @@ public class Terminal : MonoBehaviour {
 
     [Header("Game Manager")]
         public GameManager gameManager = null;
+        public Nodes nodes = null;
+
+    [Header("State")]
+        public string termState = "snake";
+
+    void SwitchState(string newState) {
+        termState = newState;
+        if (console == null) return;
+        switch (newState) {
+            case "snake":
+            case "flappy": console.characterWidthAdjustment = 50f; break;
+            default:       console.characterWidthAdjustment =  0f; break;
+        }
+    }
 
     private List<string> mockOSText = new List<string> {
         " __  __            _     ____   _____ ",
@@ -136,6 +171,18 @@ public class Terminal : MonoBehaviour {
     private const float    KeyRepeatDelay = 0.4f;
     private const float    KeyRepeatRate  = 0.05f;
 
+    [Header("UI Action References")]
+    [SerializeField] private InputActionReference upAction;
+    [SerializeField] private InputActionReference downAction;
+    [SerializeField] private InputActionReference leftAction;
+    [SerializeField] private InputActionReference rightAction;
+
+
+    private SnakeGame  snake;
+    private FlappyBird   flappy;
+    private readonly System.Random miniGameRng = new();
+    private MockFileSystem.Directory pendingUnlockDir = null;
+
     /*
         Boots the filesystem and prints the motd on scene start.
     */
@@ -146,6 +193,13 @@ public class Terminal : MonoBehaviour {
         Handles cursor blink, key-repeat backspace, and character input each frame.
     */
     void Update() {
+        if      (termState == "terminal") TerminalUpdate();
+        else if (termState == "snake")    SnakeUpdate();
+        else if (termState == "flappy")   FlappyUpdate();
+    }
+
+
+    void TerminalUpdate() {
         cursorTimer += Time.deltaTime;
         if (cursorTimer >= cursorBlinkRate) {
             cursorTimer   = 0f;
@@ -153,9 +207,7 @@ public class Terminal : MonoBehaviour {
             Refresh();
         }
 
-        if (queryActive) {
-            Refresh();
-        }
+        if (queryActive) Refresh();
 
         if (!active) return;
 
@@ -185,13 +237,73 @@ public class Terminal : MonoBehaviour {
     }
 
 
+    void SnakeUpdate() {
+        if (!snake.Update(Time.deltaTime)) return;
+
+        if (snake.hasWon) {
+            UnlockPending();
+            return;
+        }
+
+        if (snake.isDead) {
+            history = ""; inputBuffer = "";
+            SwitchState("terminal"); CmdNeofetch(); WritePrompt(); Refresh();
+            return;
+        }
+
+        inputBuffer = "";
+        history = snake.BuildDisplay();
+        Refresh();
+    }
+
+    void FlappyUpdate() {
+        if (!flappy.Update(Time.deltaTime)) return;
+
+        if (flappy.hasWon) {
+            UnlockPending();
+            return;
+        }
+
+        if (flappy.isDead) {
+            history = ""; inputBuffer = "";
+            SwitchState("terminal"); CmdNeofetch(); WritePrompt(); Refresh();
+            return;
+        }
+
+        inputBuffer = "";
+        history = flappy.BuildDisplay();
+        Refresh();
+    }
+
+    void UnlockPending() {
+        if (pendingUnlockDir != null) {
+            pendingUnlockDir.isLocked = false;
+            fileSystem.cwd = pendingUnlockDir;
+            pendingUnlockDir = null;
+        }
+        history = ""; inputBuffer = "";
+        SwitchState("terminal");
+        history += "[SYSTEM] Encryption broken. Directory unlocked.\n\n";
+        CmdLs(new string[0]);
+        WritePrompt(); Refresh();
+    }
+
+
     /*
         Initialises the filesystem, displays the motd, and shows the first prompt.
     */
     void Boot() {
+        if (gameManager == null) gameManager = FindFirstObjectByType<GameManager>(FindObjectsInactive.Include);
+        if (nodes == null) nodes = FindFirstObjectByType<Nodes>(FindObjectsInactive.Include);
         fileSystem.Init();
+        snake  = new SnakeGame(16, 40, upAction, downAction, leftAction, rightAction);
+        flappy = new FlappyBird(16, 40, upAction);
+        snake.Init();
+        flappy.Init();
+        SwitchState(termState);
         foreach (var line in mockOSText) history += line + "\n";
         history += "\n";
+        CmdHelp();
         WritePrompt();
         Refresh();
     }
@@ -272,7 +384,9 @@ public class Terminal : MonoBehaviour {
             case "cd":    CmdCd(args);   break;
             case "pwd":   CmdPwd();      break;
             case "cat":   CmdCat(args);  break;
-            case "echo":  CmdEcho(args); break;
+            case "echo":    CmdEcho(args);      break;
+            case "neofetch": CmdNeofetch();      break;
+            case "forward": CmdForward(args);    break;
             default:
                 history += $"{cmd}: command not found\n";
                 break;
@@ -283,7 +397,25 @@ public class Terminal : MonoBehaviour {
         Prints the list of available commands.
     */
     void CmdHelp() =>
-        history += "commands: help  clear  ls  cd  pwd  cat  echo\n";
+        history += "commands: help  clear  ls  cd  pwd  cat  echo  neofetch  forward\n";
+
+
+    void CmdNeofetch() { foreach (var line in mockOSText) history += line + "\n"; history += "\n"; CmdHelp(); }
+
+
+    void CmdSnake() { snake.Init(); SwitchState("snake"); }
+
+    void CmdForward(string[] args) {
+        if (args.Length == 0) { history += "usage: forward <password>\n"; return; }
+        var passwdFile = fileSystem.cwd.files.Find(f => f.name == "passwd");
+        if (passwdFile == null) { history += "forward: no passwd file in current directory\n"; return; }
+        if (args[0] == passwdFile.contents.Trim()) {
+            history += "[SYSTEM] Credentials accepted. Progress recorded.\n";
+            if (nodes != null) nodes.AdvanceNodes(3);
+        } else {
+            history += "[SYSTEM] Incorrect password.\n";
+        }
+    }
 
 
     /*
@@ -299,7 +431,7 @@ public class Terminal : MonoBehaviour {
     void CmdLs(string[] args) {
         var dir = args.Length > 0 ? Resolve(args[0]) : fileSystem.cwd;
         if (dir == null) { history += $"ls: {args[0]}: No such file or directory\n"; return; }
-        foreach (var d in dir.directories) history += d.name + "/\n";
+        foreach (var d in dir.directories) history += (d.isLocked ? "[locked] " : "") + d.name + "/\n";
         foreach (var f in dir.files)       history += f.name + "\n";
     }
 
@@ -311,6 +443,17 @@ public class Terminal : MonoBehaviour {
         if (args.Length == 0) { fileSystem.cwd = fileSystem.home; return; }
         var dir = Resolve(args[0]);
         if (dir == null) { history += $"cd: {args[0]}: No such file or directory\n"; return; }
+        if (dir.isLocked) {
+            pendingUnlockDir = dir;
+            if (miniGameRng.Next(2) == 0) {
+                history += $"[SYSTEM] '{dir.name}' is encrypted. Hack it open — eat {SnakeGame.WinScore} apples.\n\n";
+                snake.Init(dir.name); SwitchState("snake");
+            } else {
+                history += $"[SYSTEM] '{dir.name}' is encrypted. Hack it open — dodge {FlappyBird.WinScore} pipes.\n\n";
+                flappy.Init(dir.name); SwitchState("flappy");
+            }
+            return;
+        }
         fileSystem.cwd = dir;
     }
 
@@ -461,9 +604,7 @@ public class Terminal : MonoBehaviour {
     /*
         Removes the last character from inputBuffer and refreshes the display.
     */
-    void Backspace() {
-        if (inputBuffer.Length > 0) { inputBuffer = inputBuffer[..^1]; Refresh(); }
-    }
+    void Backspace() { if (inputBuffer.Length > 0) { inputBuffer = inputBuffer[..^1]; Refresh(); } }
 
 
     /*
@@ -528,6 +669,11 @@ public class Terminal : MonoBehaviour {
     void OnEnable()  {
         if (Keyboard.current != null) Keyboard.current.onTextInput += OnTextInput;
         Refresh();
+
+        upAction.action.Enable();
+        downAction.action.Enable();
+        leftAction.action.Enable();
+        rightAction.action.Enable();
     }
 
 
@@ -540,5 +686,8 @@ public class Terminal : MonoBehaviour {
     /*
         Stores a printable character for consumption next Update.
     */
-    void OnTextInput(char c) { if (c >= 32 && c != 127) _pendingChar = c; }
+    void OnTextInput(char c) { if (c >= 32 && c != 127 && c < 0xE000) _pendingChar = c; }
+
+
+    void Clear() { history = ""; inputBuffer = ""; }
 }
