@@ -41,6 +41,10 @@ public class ButtonOrder : MonoBehaviour
             timer = 20;
             solutiontxt = "";
 
+            foreach (Button button in buttons) {
+                button.GetComponent<Image>().color = Color.white;
+            }
+
             for (int i = 0; i < solution.Length; i++)
             {
                 int temp = solution[i];
@@ -85,6 +89,7 @@ public class ButtonOrder : MonoBehaviour
             minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
         }
         counter++;
+        buttons[0].GetComponent<Image>().color = Color.green;
     }
     public void Button2()
     {
@@ -95,6 +100,7 @@ public class ButtonOrder : MonoBehaviour
             minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
         }
         counter++;
+        buttons[1].GetComponent<Image>().color = Color.green;
     }
     public void Button3()
     {
@@ -105,6 +111,7 @@ public class ButtonOrder : MonoBehaviour
             minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
         }
         counter++;
+        buttons[2].GetComponent<Image>().color = Color.green;
     }
     public void Button4()
     {
@@ -115,6 +122,7 @@ public class ButtonOrder : MonoBehaviour
             minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
         }
         counter++;
+        buttons[3].GetComponent<Image>().color = Color.green;
     }
     public void Button5()
     {
@@ -125,6 +133,7 @@ public class ButtonOrder : MonoBehaviour
             minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
         }
         counter++;
+        buttons[4].GetComponent<Image>().color = Color.green;
     }
     public void Button6()
     {
@@ -135,5 +144,6 @@ public class ButtonOrder : MonoBehaviour
             minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
         }
         counter++;
+        buttons[5].GetComponent<Image>().color = Color.green;
     }
 }
