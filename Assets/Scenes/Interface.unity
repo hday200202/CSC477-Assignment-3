@@ -2583,6 +2583,7 @@ GameObject:
   - component: {fileID: 180708754}
   - component: {fileID: 180708753}
   - component: {fileID: 180708752}
+  - component: {fileID: 180708757}
   - component: {fileID: 180708756}
   - component: {fileID: 180708757}
   m_Layer: 5
@@ -17958,7 +17959,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1071351519
 MonoBehaviour:
   m_ObjectHideFlags: 0

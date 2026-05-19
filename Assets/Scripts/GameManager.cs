@@ -128,12 +128,8 @@ public class GameManager : MonoBehaviour {
     public void PuzzleCompleted() { completedPuzzles++; }
     public void PuzzleFailed() { failedPuzzles++; }
 
-    public void CompleteGame(string playerName = "Player") {
-        gameOver = true;
-        totalTime = Mathf.Max(1f, totalTime);
-        int score = CalculateScore();
-        SubmitScore(playerName, score);
-        Debug.Log($"[GameManager] Game complete. Score: {score}");
+    public void CompleteGame() {
+        TriggerWin();
     }
 
     /*
