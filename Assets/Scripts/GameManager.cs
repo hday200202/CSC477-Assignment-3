@@ -14,6 +14,10 @@ public class GameManager : MonoBehaviour {
     public float queryIntervalMin = 20f;
     public float queryIntervalMax = 60f;
 
+    [Header("Audio")]
+    public AudioSource audioSrc;
+    public AudioClip   pingClip;
+
     public int suspicion = 0;
     public int completedPuzzles = 0;
     public int failedPuzzles = 0;
@@ -24,20 +28,20 @@ public class GameManager : MonoBehaviour {
 
     private float queryTimer = 0f;
     private float queryInterval = 0f;
-    private string debugSeq = "";
 
     void Awake() {
+        HS.Init(this, "Artificial Facade");
+
         screens[0].SetActive(true);
         for (int i = 1; i < screens.Length; i++)
             screens[i].SetActive(false);
-
-        HS.Init(this, "Artificial Facade");
 
         suspicion = 0;
         completedPuzzles = 0;
         failedPuzzles = 0;
         totalTime = 0f;
         queryInterval = Random.Range(queryIntervalMin, queryIntervalMax);
+
         if (endScreens == null || endScreens.Length == 0) {
             endScreens = new EndScreen[] {
                 screens[4].GetComponentInChildren<EndScreen>(true),
@@ -52,22 +56,13 @@ public class GameManager : MonoBehaviour {
         if (Keyboard.current != null && Keyboard.current.ctrlKey.isPressed && Keyboard.current.tKey.wasPressedThisFrame)
             ToggleTerminal();
 
-        // Debug cheat codes: type "2002" to trigger lose, "2003" to trigger win
+        // Debug cheat codes: F9 = trigger lose, F10 = trigger win
         if (Keyboard.current != null) {
-            for (int d = 0; d <= 9; d++) {
-                var key = Keyboard.current[(Key)(Key.Digit0 + d)];
-                var numKey = Keyboard.current[(Key)(Key.Numpad0 + d)];
-                if (key.wasPressedThisFrame || numKey.wasPressedThisFrame) {
-                    debugSeq += (char)('0' + d);
-                    if (debugSeq.Length > 4) debugSeq = debugSeq[^4..];
-                    break;
-                }
-            }
-            if (debugSeq == "2002") { debugSeq = ""; TriggerLose(); }
-            if (debugSeq == "2003") { debugSeq = ""; TriggerWin(); }
+            if (Keyboard.current.f9Key.wasPressedThisFrame)  TriggerLose();
+            if (Keyboard.current.f10Key.wasPressedThisFrame) TriggerWin();
         }
 
-        if (terminal != null && terminal.termState != "snake") queryTimer += Time.deltaTime;
+        if (terminal != null && terminal.termState != "snake" && terminal.termState != "flappy") queryTimer += Time.deltaTime;
         if (queryTimer >= queryInterval) {
             queryTimer = 0f;
             queryInterval = Random.Range(queryIntervalMin, queryIntervalMax);
@@ -114,6 +109,8 @@ public class GameManager : MonoBehaviour {
 
     void IssueQuery() {
         Debug.Log("[GameManager] New query issued.");
+        if (audioSrc != null && pingClip != null)
+            audioSrc.PlayOneShot(pingClip);
         if (terminal != null) {
             var t = terminal.GetComponent<Terminal>();
             if (t != null) t.NewQuery();
@@ -156,6 +153,7 @@ public class GameManager : MonoBehaviour {
     }
 
     public void SubmitScore(string name, int score) {
+        Debug.Log($"[GameManager] Submitting score: name='{name}' score={score}");
         HS.SubmitHighScore(this, name, score);
     }
 

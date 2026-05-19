@@ -3,9 +3,11 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class FlappyBird {
-    public bool isDead      { get; private set; }
-    public int  pipesPassed { get; private set; }
-    public bool hasWon      => pipesPassed >= WinScore;
+    public bool isDead         { get; private set; }
+    public int  pipesPassed    { get; private set; }
+    public bool hasWon         => pipesPassed >= WinScore;
+    public bool justFlapped    { get; private set; }
+    public bool justPassedPipe { get; private set; }
     public const int WinScore = 10;
 
     private readonly int      rows, cols;
@@ -73,14 +75,16 @@ public class FlappyBird {
     }
 
     void Tick() {
-        if (flapQueued) { birdVel = FlapStrength; flapQueued = false; }
+        justFlapped    = false;
+        justPassedPipe = false;
+        if (flapQueued) { birdVel = FlapStrength; flapQueued = false; justFlapped = true; }
         birdVel += Gravity;
         birdYf  += birdVel;
 
         for (int i = pipes.Count - 1; i >= 0; i--) {
             var p = pipes[i];
             p.x--;
-            if (!p.passed && p.x < BirdX) { p.passed = true; pipesPassed++; }
+            if (!p.passed && p.x < BirdX) { p.passed = true; pipesPassed++; justPassedPipe = true; }
             pipes[i] = p;
             if (p.x < 1) pipes.RemoveAt(i);
         }

@@ -10,6 +10,7 @@ public class SnakeGame {
     public bool isDead        { get; private set; }
     public int  applesEaten   { get; private set; }
     public bool hasWon        => applesEaten >= WinScore;
+    public bool justAteApple  { get; private set; }
     public const int WinScore  = 10;
 
     private string unlockTarget = "";
@@ -76,6 +77,7 @@ public class SnakeGame {
         timer = 0f;
 
         if (!isDead) {
+            justAteApple = false;
             if (inputQueue.Count > 0) direction = inputQueue.Dequeue();
             HandleMovement();
         }
@@ -163,6 +165,7 @@ public class SnakeGame {
 
         if (cell == 'O') {
             applesEaten++;
+            justAteApple = true;
             growth += 5;
             SpawnApple();
         }

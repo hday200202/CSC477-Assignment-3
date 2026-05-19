@@ -76,16 +76,17 @@ public class MockFileSystem {
 
     /*
         Builds the default filesystem tree and sets cwd to /home/user.
+        Two locked directories are placed at random locations each run.
     */
     public void Init() {
         root        = new Directory("/");
         root.parent = root;
 
-        var bin  = root.Mkdir("bin");
-        var etc  = root.Mkdir("etc");
+        var bin    = root.Mkdir("bin");
+        var etc    = root.Mkdir("etc");
         var homeDir = root.Mkdir("home");
-        var tmp  = root.Mkdir("tmp");
-        var usr  = root.Mkdir("usr");
+        var tmp    = root.Mkdir("tmp");
+        var usr    = root.Mkdir("usr");
         var varDir = root.Mkdir("var");
 
         etc.Touch("hostname",  "mockos\n");
@@ -93,9 +94,9 @@ public class MockFileSystem {
         etc.Touch("passwd",    "root:x:0:0:root:/root:/bin/sh\nuser:x:1000:1000::/home/user:/bin/sh\n");
         etc.Touch("shells",    "/bin/sh\n");
 
-        usr.Mkdir("bin");
-        usr.Mkdir("lib");
-        usr.Mkdir("share");
+        var usrBin   = usr.Mkdir("bin");
+        var usrLib   = usr.Mkdir("lib");
+        var usrShare = usr.Mkdir("share");
 
         var log = varDir.Mkdir("log");
         log.Touch("syslog", "");
@@ -107,12 +108,40 @@ public class MockFileSystem {
         home = user;
         cwd  = user;
 
-        var classified = user.Mkdir("classified");
-        classified.isLocked = true;
-        string classifiedPass = GeneratePassKey(5);
-        classified.passKey  = classifiedPass;
-        classified.Touch("passwd",      classifiedPass + "\n");
-        classified.Touch("briefing.txt", "Mission: maintain cover. Use 'forward <passwd>' to report progress.\n", "txt");
+        // Candidate parents and names for locked dirs — picked randomly each run
+        var rng = new System.Random();
+
+        (Directory dir, string label)[] parentPool = {
+            (user,     "home/user"),
+            (tmp,      "tmp"),
+            (log,      "var/log"),
+            (usrLib,   "usr/lib"),
+            (usrShare, "usr/share"),
+            (bin,      "bin"),
+        };
+
+        string[] namePool = { "classified", "vault", "private", "restricted", "secret" };
+
+        // Shuffle pools
+        for (int i = parentPool.Length - 1; i > 0; i--) {
+            int j = rng.Next(i + 1);
+            (parentPool[i], parentPool[j]) = (parentPool[j], parentPool[i]);
+        }
+        for (int i = namePool.Length - 1; i > 0; i--) {
+            int j = rng.Next(i + 1);
+            (namePool[i], namePool[j]) = (namePool[j], namePool[i]);
+        }
+
+        for (int k = 0; k < 2; k++) {
+            var parent = parentPool[k].dir;
+            var name   = namePool[k];
+            var locked = parent.Mkdir(name);
+            locked.isLocked = true;
+            string pass = GeneratePassKey(5);
+            locked.passKey = pass;
+            locked.Touch("passwd",       pass + "\n");
+            locked.Touch("briefing.txt", "Mission: maintain cover. Use 'forward <passwd>' to report progress.\n", "txt");
+        }
     }
 }
 
@@ -177,6 +206,11 @@ public class Terminal : MonoBehaviour {
     [SerializeField] private InputActionReference leftAction;
     [SerializeField] private InputActionReference rightAction;
 
+    [Header("Audio")]
+    public AudioSource audioSrc;
+    public AudioClip   flapClip;
+    public AudioClip   appleClip;
+
 
     private SnakeGame  snake;
     private FlappyBird   flappy;
@@ -240,6 +274,9 @@ public class Terminal : MonoBehaviour {
     void SnakeUpdate() {
         if (!snake.Update(Time.deltaTime)) return;
 
+        if (snake.justAteApple && audioSrc != null && appleClip != null)
+            audioSrc.PlayOneShot(appleClip);
+
         if (snake.hasWon) {
             UnlockPending();
             return;
@@ -247,7 +284,9 @@ public class Terminal : MonoBehaviour {
 
         if (snake.isDead) {
             history = ""; inputBuffer = "";
-            SwitchState("terminal"); CmdNeofetch(); WritePrompt(); Refresh();
+            SwitchState("terminal");
+            foreach (var line in mockOSText) history += line + "\n"; history += "\n"; CmdHelp();
+            WritePrompt(); Refresh();
             return;
         }
 
@@ -259,6 +298,11 @@ public class Terminal : MonoBehaviour {
     void FlappyUpdate() {
         if (!flappy.Update(Time.deltaTime)) return;
 
+        if (flappy.justFlapped && audioSrc != null && flapClip != null)
+            audioSrc.PlayOneShot(flapClip);
+        if (flappy.justPassedPipe && audioSrc != null && appleClip != null)
+            audioSrc.PlayOneShot(appleClip);
+
         if (flappy.hasWon) {
             UnlockPending();
             return;
@@ -266,7 +310,9 @@ public class Terminal : MonoBehaviour {
 
         if (flappy.isDead) {
             history = ""; inputBuffer = "";
-            SwitchState("terminal"); CmdNeofetch(); WritePrompt(); Refresh();
+            SwitchState("terminal");
+            foreach (var line in mockOSText) history += line + "\n"; history += "\n"; CmdHelp();
+            WritePrompt(); Refresh();
             return;
         }
 
@@ -353,10 +399,11 @@ public class Terminal : MonoBehaviour {
         if (queryActive) {
             string answer = inputBuffer.Trim();
             inputBuffer = "";
-            if (int.TryParse(answer, out int val) && val == QueryPool[queryAnswer].answer)
-                ExitQuery(timedOut: false, correct: true);
-            else
-                ExitQuery(timedOut: false, correct: false);
+            var (_, exactAnswer, minChars) = QueryPool[queryAnswer];
+            bool correct = exactAnswer.HasValue
+                ? int.TryParse(answer, out int val) && val == exactAnswer.Value
+                : answer.Length >= minChars;
+            ExitQuery(timedOut: false, correct: correct);
             return;
         }
 
@@ -382,10 +429,7 @@ public class Terminal : MonoBehaviour {
             case "clear": CmdClear();    break;
             case "ls":    CmdLs(args);   break;
             case "cd":    CmdCd(args);   break;
-            case "pwd":   CmdPwd();      break;
             case "cat":   CmdCat(args);  break;
-            case "echo":    CmdEcho(args);      break;
-            case "neofetch": CmdNeofetch();      break;
             case "forward": CmdForward(args);    break;
             default:
                 history += $"{cmd}: command not found\n";
@@ -396,11 +440,16 @@ public class Terminal : MonoBehaviour {
     /*
         Prints the list of available commands.
     */
-    void CmdHelp() =>
-        history += "commands: help  clear  ls  cd  pwd  cat  echo  neofetch  forward\n";
-
-
-    void CmdNeofetch() { foreach (var line in mockOSText) history += line + "\n"; history += "\n"; CmdHelp(); }
+    void CmdHelp() {
+        history += "\n";
+        history += "commands: \n";
+        history += "    help    - print this message\n";  
+        history += "    clear   - clear terminal screen\n";
+        history += "    ls      - list files in a directory\n";
+        history += "    cd      - change current directory\n";
+        history += "    cat     - print contents of a file\n";
+        history += "    forward - forward [password]\n\n";
+    }
 
 
     void CmdSnake() { snake.Init(); SwitchState("snake"); }
@@ -458,12 +507,6 @@ public class Terminal : MonoBehaviour {
     }
 
     /*
-        Prints the absolute path of the current working directory.
-    */
-    void CmdPwd() => history += GetPath(fileSystem.cwd) + "\n";
-
-
-    /*
         Prints the contents of one or more files in cwd.
     */
     void CmdCat(string[] args) {
@@ -474,12 +517,6 @@ public class Terminal : MonoBehaviour {
             history += file.contents;
         }
     }
-
-    /*
-        Prints all arguments joined by spaces followed by a newline.
-    */
-    void CmdEcho(string[] args) => history += string.Join(" ", args) + "\n";
-
 
     /*
         Picks a random simple math problem, saves terminal state, and switches
@@ -529,17 +566,20 @@ public class Terminal : MonoBehaviour {
 
     private const int QueryBarWidth = 38;
 
-    private static readonly (string prompt, int answer)[] QueryPool = {
-        ("What is 7 + 5?",    12),
-        ("What is 9 * 3?",    27),
-        ("What is 64 / 8?",    8),
-        ("What is 15 - 6?",    9),
-        ("What is 12 + 19?",  31),
-        ("What is 6 * 7?",    42),
-        ("What is 100 - 37?", 63),
-        ("What is 8 * 8?",    64),
-        ("What is 81 / 9?",    9),
-        ("What is 13 + 28?",  41),
+    private static readonly (string prompt, int? answer, int minChars)[] QueryPool = {
+        ("What is 7 + 5?",                          12,   0),
+        ("What is 9 * 3?",                          27,   0),
+        ("What is 64 / 8?",                          8,   0),
+        ("What is 15 - 6?",                          9,   0),
+        ("What is 12 + 19?",                        31,   0),
+        ("What is 6 * 7?",                          42,   0),
+        ("What is 100 - 37?",                       63,   0),
+        ("What is 8 * 8?",                          64,   0),
+        ("What is 81 / 9?",                          9,   0),
+        ("What is 13 + 28?",                        41,   0),
+        ("What is the meaning of life?",          null,  15),
+        ("What should I name my cat?",            null,  10),
+        ("Tell me a fun fact.",                   null,  15),
     };
 
 
@@ -554,7 +594,7 @@ public class Terminal : MonoBehaviour {
 
         if (tokens.Length == 0 || (tokens.Length == 1 && !trailingSpace)) {
             string prefix   = tokens.Length == 1 ? tokens[0] : "";
-            string[] cmds   = { "help", "clear", "ls", "cd", "pwd", "cat", "echo" };
+            string[] cmds   = { "help", "clear", "ls", "cd", "cat", "forward" };
             var matches     = System.Array.FindAll(cmds, c => c.StartsWith(prefix));
             ApplyCompletion(prefix, matches, false);
             return;
@@ -638,7 +678,7 @@ public class Terminal : MonoBehaviour {
             int   filled  = Mathf.RoundToInt((queryTimeLeft / 60f) * QueryBarWidth);
             int   empty   = QueryBarWidth - filled;
             string bar    = "[" + new string('#', filled) + new string('.', empty) + "]";
-            var (prompt, _) = QueryPool[queryAnswer];
+            var (prompt, _, _) = QueryPool[queryAnswer];
             string screen =
                 "\n[SYSTEM QUERY]\n" +
                 "\n" +
