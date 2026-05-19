@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class MinigameManager : MonoBehaviour
 {
@@ -31,6 +32,11 @@ public class MinigameManager : MonoBehaviour
         {
             mapNotif.SetActive(false);
         }
+
+        //if (Keyboard.current.enterKey.wasPressedThisFrame)
+        //{
+        //    minigameSuccess = true;
+        //}
     }
 
     public void startPuzzle(GameObject puzzle)

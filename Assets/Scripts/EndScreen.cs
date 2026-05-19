@@ -70,6 +70,7 @@ public class EndScreen : MonoBehaviour {
         if (nameBuffer.Length == 0) return;
         if (gameManager != null)
             gameManager.SubmitScore(nameBuffer, gameManager.CalculateScore());
+            //gameManager.SubmitScore(nameBuffer, 100000);
         if (submitButton != null) submitButton.interactable = false;
     }
 }
