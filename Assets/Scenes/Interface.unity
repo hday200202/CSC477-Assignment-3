@@ -17949,7 +17949,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1071351519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27931,12 +27931,12 @@ GameObject:
   - component: {fileID: 1613303723}
   - component: {fileID: 1613303722}
   m_Layer: 5
-  m_Name: Outro
+  m_Name: Outro (Lose)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1613303722
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28697,7 +28697,8 @@ MonoBehaviour:
   - {fileID: 1424818666}
   - {fileID: 180708751}
   - {fileID: 528805853}
-  terminal: {fileID: 1071351518}
+  - {fileID: 1613303721}
+  terminal: {fileID: 1071351523}
   queryIntervalMin: 20
   queryIntervalMax: 60
   suspicion: 0
@@ -28706,6 +28707,7 @@ MonoBehaviour:
   totalTime: 0
   gameOver: 0
   gameStart: 0
+  loseScreen: 0
 --- !u!4 &1674669108
 Transform:
   m_ObjectHideFlags: 0
