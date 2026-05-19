@@ -47,8 +47,7 @@ public class Nodes : MonoBehaviour
             i++;
             if (i >= nodes.Length)
             {
-                mapScreen.SetActive(false);
-                winScreen.SetActive(true);
+                ShowWinScreen();
                 gameManager.GetComponent<GameManager>().CompleteGame();
             }
             else
@@ -75,6 +74,15 @@ public class Nodes : MonoBehaviour
         }
     }
 
+    void ShowWinScreen() {
+        // If winScreen is a child of mapScreen, reparent it first so
+        // deactivating mapScreen doesn't kill winScreen's Update loop.
+        if (winScreen.transform.IsChildOf(mapScreen.transform))
+            winScreen.transform.SetParent(mapScreen.transform.parent, false);
+        winScreen.SetActive(true);
+        mapScreen.SetActive(false);
+    }
+
     public void AdvanceNodes(int count) {
         if (prevNode == null) {
             pendingAdvances += count;
@@ -91,8 +99,7 @@ public class Nodes : MonoBehaviour
             gameManager.GetComponent<GameManager>().PuzzleCompleted();
             i++;
             if (i >= nodes.Length) {
-                mapScreen.SetActive(false);
-                winScreen.SetActive(true);
+                ShowWinScreen();
                 gameManager.GetComponent<GameManager>().CompleteGame();
                 return;
             }

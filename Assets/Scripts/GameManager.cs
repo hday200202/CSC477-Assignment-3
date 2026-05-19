@@ -8,6 +8,7 @@ using Unity.VisualScripting;
 public class GameManager : MonoBehaviour {
     public GameObject[] screens;
     public Terminal terminal      = null;
+    public EndScreen[] endScreens  = null;
 
     [Header("Query Timer")]
     public float queryIntervalMin = 20f;
@@ -23,6 +24,7 @@ public class GameManager : MonoBehaviour {
 
     private float queryTimer = 0f;
     private float queryInterval = 0f;
+    private string debugSeq = "";
 
     void Awake() {
         screens[0].SetActive(true);
@@ -30,13 +32,18 @@ public class GameManager : MonoBehaviour {
             screens[i].SetActive(false);
 
         HS.Init(this, "Artificial Facade");
-        ClearScores();
 
         suspicion = 0;
         completedPuzzles = 0;
         failedPuzzles = 0;
         totalTime = 0f;
         queryInterval = Random.Range(queryIntervalMin, queryIntervalMax);
+        if (endScreens == null || endScreens.Length == 0) {
+            endScreens = new EndScreen[] {
+                screens[4].GetComponentInChildren<EndScreen>(true),
+                screens[5].GetComponentInChildren<EndScreen>(true)
+            };
+        }
     }
 
     void Update() {
@@ -44,6 +51,21 @@ public class GameManager : MonoBehaviour {
 
         if (Keyboard.current != null && Keyboard.current.ctrlKey.isPressed && Keyboard.current.tKey.wasPressedThisFrame)
             ToggleTerminal();
+
+        // Debug cheat codes: type "2002" to trigger lose, "2003" to trigger win
+        if (Keyboard.current != null) {
+            for (int d = 0; d <= 9; d++) {
+                var key = Keyboard.current[(Key)(Key.Digit0 + d)];
+                var numKey = Keyboard.current[(Key)(Key.Numpad0 + d)];
+                if (key.wasPressedThisFrame || numKey.wasPressedThisFrame) {
+                    debugSeq += (char)('0' + d);
+                    if (debugSeq.Length > 4) debugSeq = debugSeq[^4..];
+                    break;
+                }
+            }
+            if (debugSeq == "2002") { debugSeq = ""; TriggerLose(); }
+            if (debugSeq == "2003") { debugSeq = ""; TriggerWin(); }
+        }
 
         if (terminal != null && terminal.termState != "snake") queryTimer += Time.deltaTime;
         if (queryTimer >= queryInterval) {
@@ -61,21 +83,33 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-        if (suspicion >= 4)
+        if (suspicion >= 4 && !loseScreen)
         {
-            
+            loseScreen = true;
             gameOver = true;
             foreach (GameObject screen in screens)
                 screen.SetActive(false);
-            /*
-            if (loseScreen == false)
-            {
-                screens[6].SetActive(true);
-                loseScreen = true;
-            }
-            */
             screens[5].SetActive(true);
         }
+
+        if (endScreens != null && gameOver)
+            foreach (var es in endScreens) if (es != null) es.Tick(Time.deltaTime);
+    }
+
+    void TriggerLose() {
+        if (loseScreen) return;
+        loseScreen = true;
+        gameOver = true;
+        foreach (GameObject screen in screens) screen.SetActive(false);
+        screens[5].SetActive(true);
+    }
+
+    void TriggerWin() {
+        if (gameOver) return;
+        loseScreen = true; // prevent lose block from also firing
+        gameOver = true;
+        foreach (GameObject screen in screens) screen.SetActive(false);
+        screens[4].SetActive(true);
     }
 
     void IssueQuery() {
