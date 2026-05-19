@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour {
     public float totalTime = 0f;
     public bool gameOver = false;
     public bool gameStart = false;
+    public bool loseScreen = false;
 
     private float queryTimer = 0f;
     private float queryInterval = 0f;
@@ -62,9 +63,17 @@ public class GameManager : MonoBehaviour {
 
         if (suspicion >= 4)
         {
+            
             gameOver = true;
             foreach (GameObject screen in screens)
                 screen.SetActive(false);
+            /*
+            if (loseScreen == false)
+            {
+                screens[6].SetActive(true);
+                loseScreen = true;
+            }
+            */
             screens[5].SetActive(true);
         }
     }
