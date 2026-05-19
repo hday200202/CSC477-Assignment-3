@@ -18,7 +18,7 @@ public class Wordle : MonoBehaviour
     public AudioClip failure;
 
 
-    private string[] wordLibrary = { "kitty", "ready", "stars", "hello", "world" };
+    private string[] wordLibrary = { "kitty", "ready", "stars", "hello", "world", "tacos", "puppy", "fleet", "smart", "trike", "berry", "straw", "river" };
     private string selectedWord;
     private string alreadyContains;
     private int lineCount;
@@ -26,7 +26,7 @@ public class Wordle : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        wordInput.characterLimit = 5;
     }
 
     private void OnEnable()
@@ -39,6 +39,8 @@ public class Wordle : MonoBehaviour
             lineCount = 0;
             alreadyContains = "";
             minigameManager.GetComponent<MinigameManager>().minigameStart = false;
+
+            wordInput.ActivateInputField();
         }
     }
 
@@ -101,6 +103,8 @@ public class Wordle : MonoBehaviour
                 audioSrc.PlayOneShot(failure);
                 boardClear();
             }
+
+            wordInput.ActivateInputField();
         }
     }
 

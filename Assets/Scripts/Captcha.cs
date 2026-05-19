@@ -15,9 +15,9 @@ public class Captcha : MonoBehaviour
     public AudioClip success;
     public AudioClip failure;
 
-    private static string[] color = { "orange one", "blue one", "green one", "pink one" };
-    private static string[] number = {"number 1", "number 2", "number 3", "number 4"};
-    private static string[] shape = {"square", "triangle", "hexagon", "circle"};
+    private static string[] color = { "orange one", "blue one", "green one", "pink one", "yellow one", "purple one" };
+    private static string[] number = {"number 1", "number 2", "number 3", "number 4", "number 5", "number 6"};
+    private static string[] shape = {"square", "triangle", "hexagon", "circle", "diamond", "oval"};
     private string[][] options = { color, number, shape };
     private string selectedTrait;
     private float timer = 15;
@@ -29,7 +29,8 @@ public class Captcha : MonoBehaviour
         buttons[1].onClick.AddListener(Button2);
         buttons[2].onClick.AddListener(Button3);
         buttons[3].onClick.AddListener(Button4);
-
+        buttons[4].onClick.AddListener(Button5);
+        buttons[5].onClick.AddListener(Button6);
 
     }
 
@@ -158,6 +159,60 @@ public class Captcha : MonoBehaviour
             minigameManager.GetComponent<MinigameManager>().minigameSuccess = true;
         }
         else if (selectedTrait == "circle")
+        {
+            captcha.SetActive(false);
+            audioSrc.PlayOneShot(success);
+            minigameManager.GetComponent<MinigameManager>().minigameSuccess = true;
+        }
+        else
+        {
+            captcha.SetActive(false);
+            audioSrc.PlayOneShot(failure);
+            minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
+        }
+    }
+    private void Button5()
+    {
+        if (selectedTrait == "yellow one")
+        {
+            captcha.SetActive(false);
+            audioSrc.PlayOneShot(success);
+            minigameManager.GetComponent<MinigameManager>().minigameSuccess = true;
+        }
+        else if (selectedTrait == "number 5")
+        {
+            captcha.SetActive(false);
+            audioSrc.PlayOneShot(success);
+            minigameManager.GetComponent<MinigameManager>().minigameSuccess = true;
+        }
+        else if (selectedTrait == "diamond")
+        {
+            captcha.SetActive(false);
+            audioSrc.PlayOneShot(success);
+            minigameManager.GetComponent<MinigameManager>().minigameSuccess = true;
+        }
+        else
+        {
+            captcha.SetActive(false);
+            audioSrc.PlayOneShot(failure);
+            minigameManager.GetComponent<MinigameManager>().minigameFailure = true;
+        }
+    }
+    private void Button6()
+    {
+        if (selectedTrait == "purple one")
+        {
+            captcha.SetActive(false);
+            audioSrc.PlayOneShot(success);
+            minigameManager.GetComponent<MinigameManager>().minigameSuccess = true;
+        }
+        else if (selectedTrait == "number 6")
+        {
+            captcha.SetActive(false);
+            audioSrc.PlayOneShot(success);
+            minigameManager.GetComponent<MinigameManager>().minigameSuccess = true;
+        }
+        else if (selectedTrait == "oval")
         {
             captcha.SetActive(false);
             audioSrc.PlayOneShot(success);
